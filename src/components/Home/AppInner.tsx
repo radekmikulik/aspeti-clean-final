@@ -1,13 +1,11 @@
 // ASPETi Home – Baseline v1 (2025-10-10, Europe/Prague)
 // KÓD BYL OPRAVEN Z DŮVODU NEKOMPLETNÍHO UZAVÍRÁNÍ TAGŮ.
 // JEDINÝ ZDROJ PRAVDY pro UI domovské stránky. Všechny
-další úpravy dělat pouze jako malé diffy níže.
+// další úpravy dělat pouze jako malé diffy níže.
 // NEMĚNIT bez výslovného zadání: 
 //  - 5 panelů (desktop) s průhledným zeleným pruhem na spodní liště panelu
-//  - Sticky filtr
-(výška vstupů h-7), badge „Nalezeno"
-//  - VIP pořadí:
-sleva → čerstvost (novější první při stejné slevě)
+//  - Sticky filtr (výška vstupů h-7), badge „Nalezeno"
+//  - VIP pořadí: sleva → čerstvost (novější první při stejné slevě)
 //  - TOP/NEW okna: 24
 h (beauty/gastro/ubytování), 72 h (řemesla/reality)
 //  - Sleva pod
