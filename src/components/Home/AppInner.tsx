@@ -17,9 +17,9 @@ import React, { useState, useMemo, useEffect, useRef } from
 'react';
  
 // ----- Globální pomocné funkce (dostupné pro všechny
-komponenty) -----
- // using global
-daysSince
+// komponenty) -----
+// using global
+// daysSince
  
 const hoursSince = (dateStr) => {
  try { return
