@@ -21,14 +21,14 @@ import React, { useState, useMemo, useEffect, useRef } from
 // using global
 // daysSince
  
-const hoursSince = (dateStr) => {
+const hoursSince = (dateStr: string) => {
  try { return
 Math.max(0, (Date.now() - new Date(dateStr).getTime())/(1000*60*60)); }
  catch { return 9999;
 }
 };
 // NOVINKA: okno "NEW" podle kategorie – akční
-služby 24h, řemesla/reality 72h
+// služby 24h, řemesla/reality 72h
 const isNewOffer = (o) => {
  const key = o ?
 o.categoryKey : null;
