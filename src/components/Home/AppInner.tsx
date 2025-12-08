@@ -7,11 +7,11 @@
 //  - Sticky filtr (výška vstupů h-7), badge „Nalezeno"
 //  - VIP pořadí: sleva → čerstvost (novější první při stejné slevě)
 //  - TOP/NEW okna: 24
-h (beauty/gastro/ubytování), 72 h (řemesla/reality)
+// h (beauty/gastro/ubytování), 72 h (řemesla/reality)
 //  - Sleva pod
-fotkou; standardní karty 3 vedle sebe na desktopu
+// fotkou; standardní karty 3 vedle sebe na desktopu
 // ZMĚNY ZAPISOVAT jako komentáře: // ADD(YYYY-MM-DD): ...
-nebo // UPDATE(YYYY-MM-DD): ...
+// nebo // UPDATE(YYYY-MM-DD): ...
  
 import React, { useState, useMemo, useEffect, useRef } from
 'react';
