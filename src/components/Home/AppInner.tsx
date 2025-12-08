@@ -29,13 +29,10 @@ Math.max(0, (Date.now() - new Date(dateStr).getTime())/(1000*60*60)); }
 };
 // NOVINKA: okno "NEW" podle kategorie – akční
 // služby 24h, řemesla/reality 72h
-const isNewOffer = (o) => {
- const key = o ?
-o.categoryKey : null;
- const winH = (key
-=== 'reality' || key === 'remesla') ? 72 : 24;
- const added = o
-&& o.addedAt ? o.addedAt : 0;
+const isNewOffer = (o: any) => {
+ const key = o ? o.categoryKey : null;
+ const winH = (key === 'reality' || key === 'remesla') ? 72 : 24;
+ const added = o && o.addedAt ? o.addedAt : 0;
  return
 hoursSince(added) <= winH;
 };
