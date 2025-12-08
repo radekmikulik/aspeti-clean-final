@@ -39,7 +39,7 @@ const isNewOffer = (o: any) => {
    return false;
  }
 };
-const prettyAge = (dateStr) => {
+const prettyAge = (dateStr: string) => {
  const ms =
 Date.now() - new Date(dateStr).getTime();
  const h =
