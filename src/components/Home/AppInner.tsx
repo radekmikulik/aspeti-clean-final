@@ -54,7 +54,7 @@ Math.floor(h/24);
 };
  
 // Bezpečný obrázkový komponent s fallbackem (řeší 403/CSP a
-hotlink blokace)
+// hotlink blokace)
 function ImageWithFallback({ src, alt, className }) {
  // Multi‑source
 loader: podporuje pole zdrojů [primární, sekundární, ...]
