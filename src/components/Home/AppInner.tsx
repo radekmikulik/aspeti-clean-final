@@ -107,7 +107,7 @@ select-none">ASPETi</span>
 }
  
 // Lokální SVG fallbacky (aby se konkrétní fotky vždy
-zobrazily)
+// zobrazily)
 const mkSVG = (label) => 'data:image/svg+xml;utf8,' +
 encodeURIComponent(`
  <svg
