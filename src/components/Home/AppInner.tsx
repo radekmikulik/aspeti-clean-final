@@ -34,7 +34,7 @@ const isNewOffer = (o: any) => {
  const winH = (key === 'reality' || key === 'remesla') ? 72 : 24;
  const added = o && o.addedAt ? o.addedAt : 0;
  try {
-   return hoursSince(added!) <= winH;
+   return (hoursSince as any)(added!) <= winH;
  } catch {
    return false;
  }
