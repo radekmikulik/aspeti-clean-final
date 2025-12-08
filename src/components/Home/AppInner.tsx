@@ -57,7 +57,7 @@ Math.floor(h/24);
 // hotlink blokace)
 function ImageWithFallback({ src, alt, className }: { src: string; alt: string; className?: string }) {
  // Multi‑source
-loader: podporuje pole zdrojů [primární, sekundární, ...]
+// loader: podporuje pole zdrojů [primární, sekundární, ...]
  const sources =
 Array.isArray(src) ? src : [src];
  const [idx, setIdx]
