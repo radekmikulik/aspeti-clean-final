@@ -3,8 +3,7 @@
 // JEDINÝ ZDROJ PRAVDY pro UI domovské stránky. Všechny
 další úpravy dělat pouze jako malé diffy níže.
 // NEMĚNIT bez výslovného zadání: 
-//  - 5 panelů
-(desktop) s průhledným zeleným pruhem na spodní liště panelu
+//  - 5 panelů (desktop) s průhledným zeleným pruhem na spodní liště panelu
 //  - Sticky filtr
 (výška vstupů h-7), badge „Nalezeno"
 //  - VIP pořadí:
