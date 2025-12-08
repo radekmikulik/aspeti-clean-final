@@ -33,8 +33,7 @@ const isNewOffer = (o: any) => {
  const key = o ? o.categoryKey : null;
  const winH = (key === 'reality' || key === 'remesla') ? 72 : 24;
  const added = o && o.addedAt ? o.addedAt : 0;
- return
-hoursSince(added) <= winH;
+ return hoursSince(added) <= winH;
 };
 const prettyAge = (dateStr) => {
  const ms =
