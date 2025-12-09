@@ -519,8 +519,7 @@ id="profile" label="Profil" />
          <NavItem
 id="settings" label="Nastavení" />
        </aside>
-       <section
-className="md:col-span-9">
+       <section className="md:col-span-9">
          {section === 'overview' && (
            <div
 className="space-y-4">
