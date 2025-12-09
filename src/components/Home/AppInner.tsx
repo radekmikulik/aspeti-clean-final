@@ -238,7 +238,7 @@ leading-none">{label}</span>
  );
 }
  
-function VipCard({ o }) {
+function VipCard({ o }: { o: any }) {
  const badgeShadow =
 "shadow-[-16px_12px_10px_-6px_rgba(0,0,0,0.62),-24px_16px_18px_-10px_rgba(0,0,0,0.32)]";
  return (
