@@ -520,8 +520,6 @@ id="profile" label="Profil" />
 id="settings" label="Nastavení" />
        </aside>
        <section className="md:col-span-9">
-         {section === 'overview' && (
-           <div className="space-y-4">
              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-md border border-[#D2DED8] bg-white p-4">
                 <div className="text-xs text-gray-500">Zobrazení dnes</div>
@@ -686,6 +684,7 @@ Zobrazit v katalogu</div>
     </div>
   );
 }
+</section>
  
 function AppInner(){
  const { ref:
