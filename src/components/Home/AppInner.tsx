@@ -539,22 +539,16 @@ dnes</div>
                 <div className="mt-1 text-2xl font-semibold
 text-blue-900">97</div>
               </div>
-              <div className="rounded-md border border-[#D2DED8] bg-white
-p-4">
-                <div className="text-xs
-text-gray-500">Rezervace</div>
-                <div className="mt-1 text-2xl font-semibold
-text-blue-900">3</div>
+              <div className="rounded-md border border-[#D2DED8] bg-white p-4">
+                <div className="text-xs text-gray-500">Rezervace</div>
+                <div className="mt-1 text-2xl font-semibold text-blue-900">3</div>
               </div>
             </div>
-            <div
-className="rounded-md border border-[#D2DED8] bg-white p-4">
-             <div className="flex items-center justify-between">
-               <h2 className="text-base font-semibold text-blue-900">Co
-zlepšit</h2>
-               <span className="text-xs
-text-gray-500">Doporučení</span>
-             </div>
+            <div className="rounded-md border border-[#D2DED8] bg-white p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-semibold text-blue-900">Co zlepšit</h2>
+                <span className="text-xs text-gray-500">Doporučení</span>
+              </div>
               <ul
 className="mt-2 list-disc list-inside text-sm text-gray-700
 space-y-1">
