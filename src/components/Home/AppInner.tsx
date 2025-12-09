@@ -139,7 +139,7 @@ mkSVG('Degustační menu'),
 };
  
 // Jednoduchý tooltip (funguje i bez nativního title; hover,
-focus a tap)
+// focus a tap)
 function Tooltip({ content, children, side = 'top' }) {
  const [open,
 setOpen] = useState(false);
