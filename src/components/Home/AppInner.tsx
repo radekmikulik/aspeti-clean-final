@@ -135,8 +135,7 @@ const LOCAL_IMAGES = {
 mkSVG('Ubytování'),
  degustace:
 mkSVG('Degustační menu'),
- penzion: mkSVG('Penzion
-U Lípy'),
+ penzion: mkSVG('Penzion U Lípy'),
 };
  
 // Jednoduchý tooltip (funguje i bez nativního title; hover,
