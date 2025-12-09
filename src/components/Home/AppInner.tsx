@@ -521,8 +521,7 @@ id="settings" label="Nastavení" />
        </aside>
        <section
 className="md:col-span-9">
-         {section ===
-'overview' && (
+         {section === 'overview' && (
            <div
 className="space-y-4">
              <div
@@ -568,8 +567,7 @@ shape".</li>
             </div>
           </div>
          )}
-         {section ===
-'offers' && (
+         {section === 'offers' && (
            <div
 className="rounded-md border border-[#D2DED8] bg-white p-4">
              <div
