@@ -691,6 +691,7 @@ Zobrazit v katalogu</div>
                 </div>
                </div>
              </div>
+           )}
                {section ===
 'stats' && (
                  <div
