@@ -521,23 +521,15 @@ id="settings" label="Nastavení" />
        </aside>
        <section className="md:col-span-9">
          {section === 'overview' && (
-           <div
-className="space-y-4">
-             <div
-className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="rounded-md border border-[#D2DED8] bg-white
-p-4">
-                <div className="text-xs text-gray-500">Zobrazení
-dnes</div>
-                <div className="mt-1 text-2xl font-semibold
-text-blue-900">482</div>
+           <div className="space-y-4">
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-md border border-[#D2DED8] bg-white p-4">
+                <div className="text-xs text-gray-500">Zobrazení dnes</div>
+                <div className="mt-1 text-2xl font-semibold text-blue-900">482</div>
               </div>
-              <div className="rounded-md border border-[#D2DED8] bg-white
-p-4">
-                <div className="text-xs text-gray-500">Kliky
-dnes</div>
-                <div className="mt-1 text-2xl font-semibold
-text-blue-900">97</div>
+              <div className="rounded-md border border-[#D2DED8] bg-white p-4">
+                <div className="text-xs text-gray-500">Kliky dnes</div>
+                <div className="mt-1 text-2xl font-semibold text-blue-900">97</div>
               </div>
               <div className="rounded-md border border-[#D2DED8] bg-white p-4">
                 <div className="text-xs text-gray-500">Rezervace</div>
