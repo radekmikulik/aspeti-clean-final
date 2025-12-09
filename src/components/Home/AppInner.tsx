@@ -696,9 +696,10 @@ Zobrazit v katalogu</div>
           </div>
         )}
         {/* Ostatní sekce (orders, inbox, vip, reviews, billing, profile, settings) jsou připravené jako stub */}
-             </section>
-           </div>
-         );
+      </section>
+    </div>
+  );
+}
 }
  
 function AppInner(){
