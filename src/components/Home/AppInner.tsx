@@ -629,8 +629,7 @@ py-1">Archivovat</button>
              </table>
             </div>
           </div>
-           {section ===
-'add' && (
+           {section === 'add' && (
              <div
 className="space-y-4">
               <div
