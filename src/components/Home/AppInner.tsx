@@ -470,7 +470,7 @@ function AccountView({ onClose }: { onClose: () => void }) {
  const [section,
 setSection] = React.useState('overview');
  const NavItem =
-({id, label}) => (
+({id, label}: {id: string, label: string}) => (
    <button
     onClick={()=>setSection(id)}
     className={`w-full text-left px-3 py-2 rounded-md border ${section===id?
