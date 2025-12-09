@@ -207,7 +207,7 @@ window !== 'undefined' && window.removeEventListener) {
 // standard 3×) =====
 // Bez ikon knihoven a bez TypeScript typů
  
-function CategoryPanel({ active, label, img, onClick }) {
+function CategoryPanel({ active, label, img, onClick }: { active: boolean, label: string, img: string, onClick: () => void }) {
  const baseCls =
 "group overflow-hidden rounded-md border border-[#D2DED8] bg-white
 shadow-md transition-transform duration-300 hover:-translate-y-1
