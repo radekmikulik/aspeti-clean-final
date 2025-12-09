@@ -691,8 +691,7 @@ Zobrazit v katalogu</div>
                </div>
              </div>
            )}
-               {section ===
-'stats' && (
+               {section === 'stats' && (
                  <div
 className="rounded-md border border-[#D2DED8] bg-white p-4">
                    <h2
