@@ -208,12 +208,13 @@ window !== 'undefined' && window.removeEventListener) {
 // Bez ikon knihoven a bez TypeScript typů
  
 function CategoryPanel({ active, label, img, onClick }: { active: boolean, label: string, img: string, onClick: () => void }) {
- const baseCls =
-"group overflow-hidden rounded-md border border-[#D2DED8] bg-white
+ const baseCls = `
+group overflow-hidden rounded-md border border-[#D2DED8] bg-white
 shadow-md transition-transform duration-300 hover:-translate-y-1
 hover:shadow-xl aspect-square focus-visible:outline-none focus-visible:ring-2
 focus-visible:ring-[#2F4B40] focus-visible:ring-offset-2
-focus-visible:ring-offset-[#F5F7F6]";
+focus-visible:ring-offset-[#F5F7F6]
+`;
  const cls = active ?
 baseCls + " ring-2 ring-blue-300" : baseCls;
  return (
