@@ -700,7 +700,6 @@ Zobrazit v katalogu</div>
     </div>
   );
 }
-}
  
 function AppInner(){
  const { ref:
