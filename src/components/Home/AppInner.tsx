@@ -167,7 +167,7 @@ duration-150 group-hover:opacity-100 group-focus:opacity-100 ${open ?
 }
  
 // Sticky hook pro filtr (přilepí filtr pod header při
-scrollu)
+// scrollu)
 function useSticky(offsetPx = 56) {
  const ref =
 useRef(null);
