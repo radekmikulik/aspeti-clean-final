@@ -629,8 +629,7 @@ py-1">Archivovat</button>
           </div>
            {section === 'add' && (
              <div className="space-y-4">
-              <div
-className="rounded-md border border-[#D2DED8] bg-white p-4">
+              <div className="rounded-md border border-[#D2DED8] bg-white p-4">
                  <h2
 className="text-base font-semibold text-blue-900 mb-3">Přidat
 nabídku</h2>
@@ -670,8 +669,7 @@ bg-[#2F4B40] px-3 py-1.5 text-sm text-white
 hover:opacity-90">Publikovat</button>
                 </div>
                </div>
-               <div
-className="rounded-md border border-[#D2DED8] bg-white p-4">
+               <div className="rounded-md border border-[#D2DED8] bg-white p-4">
                  <h3
 className="text-sm font-semibold text-blue-900 mb-2">Nastavení
 publikace</h3>
@@ -689,13 +687,11 @@ Zobrazit v katalogu</div>
              </div>
            )}
                {section === 'stats' && (
-                 <div
-className="rounded-md border border-[#D2DED8] bg-white p-4">
+                 <div className="rounded-md border border-[#D2DED8] bg-white p-4">
                    <h2
 className="text-base font-semibold text-blue-900
 mb-3">Statistiky</h2>
-                   <div
-className="text-sm text-gray-700">Grafy a tabulky (zobrazení,
+                   <div className="text-sm text-gray-700">Grafy a tabulky (zobrazení,
 kliky, CTR, konverze). Ukázka je zjednodušená.</div>
                 </div>
                )}
