@@ -170,7 +170,7 @@ duration-150 group-hover:opacity-100 group-focus:opacity-100 ${open ?
 // scrollu)
 function useSticky(offsetPx = 56) {
  const ref =
-useRef(null);
+useRef<HTMLDivElement | null>(null);
  const [stuck,
 setStuck] = useState(false);
  useEffect(() => {
