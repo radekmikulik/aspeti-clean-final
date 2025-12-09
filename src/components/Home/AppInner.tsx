@@ -630,8 +630,7 @@ py-1">Archivovat</button>
             </div>
           </div>
            {section === 'add' && (
-             <div
-className="space-y-4">
+             <div className="space-y-4">
               <div
 className="rounded-md border border-[#D2DED8] bg-white p-4">
                  <h2
