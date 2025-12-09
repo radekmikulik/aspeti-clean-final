@@ -473,9 +473,7 @@ setSection] = React.useState('overview');
 ({id, label}: {id: string, label: string}) => (
    <button
     onClick={()=>setSection(id)}
-    className={`w-full text-left px-3 py-2 rounded-md border ${section===id?
-'bg-[#E7EFEA] border-[#C8D6CF] text-blue-900' : 'bg-white border-transparent
-text-blue-900/80 hover:bg-[#F5F7F6]'}`}
+    className={`w-full text-left px-3 py-2 rounded-md border ${section===id ? 'bg-[#E7EFEA] border-[#C8D6CF] text-blue-900' : 'bg-white border-transparent text-blue-900/80 hover:bg-[#F5F7F6]'}`}
   >{label}</button>
  );
  return (
