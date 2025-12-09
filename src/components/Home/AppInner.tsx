@@ -466,7 +466,7 @@ value={c.key}>{c.label}</option>)}
  
 // ADD(2025-10-28): Poskytovatelský účet – demo skeleton
 // (oddělený od homepage)
-function AccountView({ onClose }){
+function AccountView({ onClose }: { onClose: () => void }) {
  const [section,
 setSection] = React.useState('overview');
  const NavItem =
