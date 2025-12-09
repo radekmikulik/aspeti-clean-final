@@ -372,7 +372,11 @@ focus-visible:ring-[#2F4B40]">Detail</button>
 }
  
 function FilterBar({ count, city, setCity, address,
-setAddress, radius, setRadius, category, setCategory, query, setQuery, stuck })
+setAddress, radius, setRadius, category, setCategory, query, setQuery, stuck }: {
+count: number, city: string, setCity: (city: string) => void, address: string,
+setAddress: (address: string) => void, radius: number, setRadius: (radius: number) => void,
+category: string, setCategory: (category: string) => void, query: string, setQuery: (query: string) => void, stuck: boolean
+})
 {
  const CATEGORIES = [
    { key:
