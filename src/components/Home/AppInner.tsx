@@ -204,7 +204,7 @@ window !== 'undefined' && window.removeEventListener) {
 }
  
 // ===== POSLEDNÍ FUNKČNÍ ZÁKLAD (5 panelů, filtr, VIP 2×,
-standard 3×) =====
+// standard 3×) =====
 // Bez ikon knihoven a bez TypeScript typů
  
 function CategoryPanel({ active, label, img, onClick }) {
