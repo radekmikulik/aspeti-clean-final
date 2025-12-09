@@ -140,7 +140,7 @@ mkSVG('Degustační menu'),
  
 // Jednoduchý tooltip (funguje i bez nativního title; hover,
 // focus a tap)
-function Tooltip({ content, children, side = 'top' }) {
+function Tooltip({ content, children, side = 'top' }: { content: React.ReactNode, children: React.ReactNode, side?: string }) {
  const [open,
 setOpen] = useState(false);
  const pos = side ===
