@@ -298,7 +298,7 @@ focus-visible:ring-[#2F4B40]">Detail</button>
  );
 }
  
-function StdCard({ o }) {
+function StdCard({ o }: { o: any }) {
  const badgeShadow =
 "shadow-[-12px_10px_8px_-6px_rgba(0,0,0,0.62),-20px_16px_16px_-10px_rgba(0,0,0,0.3)]";
  return (
