@@ -32,15 +32,8 @@ const CategoryPanels: React.FC<{
   ]
 
   return (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-      gap: '16px', 
-      marginBottom: '32px',
-      padding: '20px',
-      backgroundColor: '#f8f9fa'
-    }}>
-      <h3 style={{ gridColumn: '1 / -1', fontSize: '18px', fontWeight: 'bold', marginBottom: '16px' }}>
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 p-6 bg-primary-50 rounded-xl shadow-sm">
+      <h3 className="col-span-1 md:col-span-5 text-xl font-bold text-primary-800 mb-4">
         Kategorie služeb
       </h3>
       {categories.map((cat) => (
@@ -50,25 +43,23 @@ const CategoryPanels: React.FC<{
             console.log('Kategorie klik:', cat.id) // DEBUG
             setSelectedCategory(cat.id)
           }}
+          className={`
+            cursor-pointer min-h-[120px] p-6 rounded-xl flex flex-col justify-between
+            transition-all duration-200 transform hover:scale-105 hover:shadow-md
+            ${selectedCategory === cat.id 
+              ? 'ring-4 ring-primary-400 scale-105 shadow-lg' 
+              : 'hover:shadow-md'
+            }
+            text-white
+          `}
           style={{
             backgroundColor: cat.bgColor,
-            color: 'white',
-            padding: '24px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            minHeight: '120px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            transform: selectedCategory === cat.id ? 'scale(1.05)' : 'scale(1)',
-            boxShadow: selectedCategory === cat.id ? '0 0 0 4px rgba(59, 130, 246, 0.5)' : 'none',
-            transition: 'all 0.2s'
           }}
         >
-          <div style={{ fontSize: '32px', marginBottom: '8px' }}>{cat.icon}</div>
+          <div className="text-3xl mb-2">{cat.icon}</div>
           <div>
-            <h3 style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>{cat.name}</h3>
-            <p style={{ fontSize: '12px', opacity: 0.9 }}>{cat.count} nabídek</p>
+            <h3 className="font-bold text-sm mb-1">{cat.name}</h3>
+            <p className="text-xs opacity-90">{cat.count} nabídek</p>
           </div>
         </div>
       ))}
@@ -474,7 +465,7 @@ export default function AppInner() {
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <h1 className="text-2xl font-bold text-blue-600">ASPETi</h1>
+                <h1 className="text-2xl font-bold text-primary-600">ASPETi</h1>
                 {!accountOpen && (
                   <span className="text-sm text-gray-500 hidden md:inline">
                     Katalog nabídek
@@ -508,38 +499,15 @@ export default function AppInner() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          {/* KRITICKÁ OPRAVA - Katalog vždy viditelný */}
-          <div style={{ backgroundColor: 'red', padding: '20px', marginBottom: '20px', color: 'white', fontWeight: 'bold' }}>
-            🔥 KATALOG SE VŽDY ZOBRAZUJE - accountOpen = {accountOpen.toString()}
-          </div>
           
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
             <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
           </div>
 
-          {/* ÚPLNĚ JEDNODUCHÁ VERZE - ZÁKLADNÍ HTML - FORCED DEPLOY v3 - FIXED BUILD ERRORS */}
-          <div style={{backgroundColor: '#ff0000', color: 'white', padding: '20px', marginBottom: '20px', fontWeight: 'bold', textAlign: 'center'}}>
-            🔥 5 KATEGORIÍ PANELŮ 🔥 - VYNUCENÝ DEPLOY
-          </div>
+
           
-          <div style={{display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap'}}>
-            <div style={{backgroundColor: '#ec4899', color: 'white', padding: '15px', borderRadius: '5px', cursor: 'pointer'}} onClick={() => setSelectedCategory('beauty')}>
-              💄 Beauty & Wellbeing
-            </div>
-            <div style={{backgroundColor: '#f97316', color: 'white', padding: '15px', borderRadius: '5px', cursor: 'pointer'}} onClick={() => setSelectedCategory('gastro')}>
-              🍽️ Gastro
-            </div>
-            <div style={{backgroundColor: '#3b82f6', color: 'white', padding: '15px', borderRadius: '5px', cursor: 'pointer'}} onClick={() => setSelectedCategory('accommodation')}>
-              🏨 Ubytování
-            </div>
-            <div style={{backgroundColor: '#10b981', color: 'white', padding: '15px', borderRadius: '5px', cursor: 'pointer'}} onClick={() => setSelectedCategory('reality')}>
-              🏠 Reality
-            </div>
-            <div style={{backgroundColor: '#f59e0b', color: 'white', padding: '15px', borderRadius: '5px', cursor: 'pointer'}} onClick={() => setSelectedCategory('crafts')}>
-              🔧 Řemesla
-            </div>
-          </div>
+
 
           <FilterBar
             query={query}
