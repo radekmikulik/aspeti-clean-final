@@ -505,73 +505,77 @@ export default function AppInner() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          {/* DEBUG - Viditelný text */}
-          <div style={{ backgroundColor: 'yellow', padding: '10px', marginBottom: '10px' }}>
-            DEBUG: accountOpen = {accountOpen.toString()}
+          {/* KRITICKÁ OPRAVA - Katalog vždy viditelný */}
+          <div style={{ backgroundColor: 'red', padding: '20px', marginBottom: '20px', color: 'white', fontWeight: 'bold' }}>
+            🔥 KATALOG SE VŽDY ZOBRAZUJE - accountOpen = {accountOpen.toString()}
           </div>
           
-          {!accountOpen && (
-            <>
-              <div style={{ backgroundColor: 'lightgreen', padding: '10px', marginBottom: '10px' }}>
-                DEBUG: Katalog section se renderuje!
-              </div>
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
-                <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
-              </div>
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
+            <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
+          </div>
 
-              <CategoryPanels 
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
+          <CategoryPanels 
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
 
-              <FilterBar
-                query={query}
-                setQuery={setQuery}
-                category={category}
-                setCategory={setCategory}
-                location={location}
-                setLocation={setLocation}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                totalCount={offers.length}
-              />
+          <FilterBar
+            query={query}
+            setQuery={setQuery}
+            category={category}
+            setCategory={setCategory}
+            location={location}
+            setLocation={setLocation}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            totalCount={offers.length}
+          />
 
-              <div className="mb-4 flex justify-between items-center">
-                <p className="text-gray-600">
-                  {loading ? 'Načítání...' : `Nalezeno ${offers.length} nabídek`}
-                </p>
-              </div>
+          <div className="mb-4 flex justify-between items-center">
+            <p className="text-gray-600">
+              {loading ? 'Načítání...' : `Nalezeno ${offers.length} nabídek`}
+            </p>
+          </div>
 
-              {error && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                  <p className="text-yellow-800">{error}</p>
-                  <p className="text-yellow-600 text-sm mt-1">
-                    Zobrazují se ukázková data pro demonstraci funkcionality.
-                  </p>
-                </div>
-              )}
-
-              {loading ? (
-                <LoadingSpinner />
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {offers.map(offer => (
-                    <OfferCard key={offer.id} offer={offer} />
-                  ))}
-                </div>
-              )}
-
-              {!loading && offers.length === 0 && !error && (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg">Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
-                </div>
-              )}
-            </>
+          {error && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <p className="text-yellow-800">{error}</p>
+              <p className="text-yellow-600 text-sm mt-1">
+                Zobrazují se ukázková data pro demonstraci funkcionality.
+              </p>
+            </div>
           )}
 
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {offers.map(offer => (
+                <OfferCard key={offer.id} offer={offer} />
+              ))}
+            </div>
+          )}
+
+          {!loading && offers.length === 0 && !error && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
+            </div>
+          )}
+
+          {/* AccountView jako overlay */}
           {accountOpen && (
-            <AccountView onClose={() => setAccountOpen(false)} />
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 1000
+            }}>
+              <AccountView onClose={() => setAccountOpen(false)} />
+            </div>
           )}
         </main>
       </div>
