@@ -515,10 +515,41 @@ export default function AppInner() {
             <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
           </div>
 
-          <CategoryPanels 
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
+          {/* JEDNODUCHÁ HTML VERZE KATEGORIÍ PANELŮ */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
+            gap: '16px',
+            marginBottom: '32px',
+            padding: '20px',
+            backgroundColor: '#f8f9fa'
+          }}>
+            <div style={{backgroundColor: '#ec4899', color: 'white', padding: '24px', borderRadius: '8px', cursor: 'pointer'}} onClick={() => setSelectedCategory('beauty')}>
+              <div style={{fontSize: '32px'}}>💄</div>
+              <div style={{fontWeight: 'bold'}}>Beauty & Wellbeing</div>
+              <div style={{fontSize: '12px'}}>3 nabídek</div>
+            </div>
+            <div style={{backgroundColor: '#f97316', color: 'white', padding: '24px', borderRadius: '8px', cursor: 'pointer'}} onClick={() => setSelectedCategory('gastro')}>
+              <div style={{fontSize: '32px'}}>🍽️</div>
+              <div style={{fontWeight: 'bold'}}>Gastro</div>
+              <div style={{fontSize: '12px'}}>1 nabídka</div>
+            </div>
+            <div style={{backgroundColor: '#3b82f6', color: 'white', padding: '24px', borderRadius: '8px', cursor: 'pointer'}} onClick={() => setSelectedCategory('accommodation')}>
+              <div style={{fontSize: '32px'}}>🏨</div>
+              <div style={{fontWeight: 'bold'}}>Ubytování</div>
+              <div style={{fontSize: '12px'}}>2 nabídky</div>
+            </div>
+            <div style={{backgroundColor: '#10b981', color: 'white', padding: '24px', borderRadius: '8px', cursor: 'pointer'}} onClick={() => setSelectedCategory('reality')}>
+              <div style={{fontSize: '32px'}}>🏠</div>
+              <div style={{fontWeight: 'bold'}}>Reality</div>
+              <div style={{fontSize: '12px'}}>1 nabídka</div>
+            </div>
+            <div style={{backgroundColor: '#f59e0b', color: 'white', padding: '24px', borderRadius: '8px', cursor: 'pointer'}} onClick={() => setSelectedCategory('crafts')}>
+              <div style={{fontSize: '32px'}}>🔧</div>
+              <div style={{fontWeight: 'bold'}}>Řemesla</div>
+              <div style={{fontSize: '12px'}}>1 nabídka</div>
+            </div>
+          </div>
 
           <FilterBar
             query={query}
