@@ -505,10 +505,16 @@ export default function AppInner() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          {console.log('Main render - accountOpen:', accountOpen)} {/* DEBUG */}
+          {/* DEBUG - Viditelný text */}
+          <div style={{ backgroundColor: 'yellow', padding: '10px', marginBottom: '10px' }}>
+            DEBUG: accountOpen = {accountOpen.toString()}
+          </div>
+          
           {!accountOpen && (
             <>
-              {console.log('Katalog section renderuje!')} {/* DEBUG */}
+              <div style={{ backgroundColor: 'lightgreen', padding: '10px', marginBottom: '10px' }}>
+                DEBUG: Katalog section se renderuje!
+              </div>
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
                 <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
