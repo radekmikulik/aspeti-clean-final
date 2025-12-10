@@ -18,6 +18,8 @@ const CategoryPanels: React.FC<{
   selectedCategory: string
   setSelectedCategory: (category: string) => void 
 }> = ({ selectedCategory, setSelectedCategory }) => {
+  console.log('CategoryPanels se renderuje!', selectedCategory) // DEBUG
+  
   const categories = [
     { id: 'beauty', name: 'Beauty & Wellbeing', icon: '💄', count: 3, bgColor: '#ec4899' },
     { id: 'gastro', name: 'Gastro', icon: '🍽️', count: 1, bgColor: '#f97316' },
@@ -31,12 +33,20 @@ const CategoryPanels: React.FC<{
       display: 'grid', 
       gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
       gap: '16px', 
-      marginBottom: '32px' 
+      marginBottom: '32px',
+      padding: '20px',
+      backgroundColor: '#f8f9fa'
     }}>
+      <h3 style={{ gridColumn: '1 / -1', fontSize: '18px', fontWeight: 'bold', marginBottom: '16px' }}>
+        Kategorie služeb
+      </h3>
       {categories.map((cat) => (
         <div
           key={cat.id}
-          onClick={() => setSelectedCategory(cat.id)}
+          onClick={() => {
+            console.log('Kategorie klik:', cat.id) // DEBUG
+            setSelectedCategory(cat.id)
+          }}
           style={{
             backgroundColor: cat.bgColor,
             color: 'white',
