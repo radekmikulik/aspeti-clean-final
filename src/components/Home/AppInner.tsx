@@ -16,6 +16,7 @@ interface FilterProps {
 }
 
 // Komponenta pro 5 velkých kategorií panelů - ZJEDNODUŠENÁ VERZE
+// BUILD FIX APPLIED: baseUrl configured for @ alias resolution
 const CategoryPanels: React.FC<{ 
   selectedCategory: string
   setSelectedCategory: (category: string) => void 
