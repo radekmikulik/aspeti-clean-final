@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { DatabaseService, Offer } from '@/lib/supabase'
@@ -515,7 +517,7 @@ export default function AppInner() {
             <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
           </div>
 
-          {/* ÚPLNĚ JEDNODUCHÁ VERZE - ZÁKLADNÍ HTML - FORCED DEPLOY */}
+          {/* ÚPLNĚ JEDNODUCHÁ VERZE - ZÁKLADNÍ HTML - FORCED DEPLOY v2 */}
           <div style={{backgroundColor: '#ff0000', color: 'white', padding: '20px', marginBottom: '20px', fontWeight: 'bold', textAlign: 'center'}}>
             🔥 5 KATEGORIÍ PANELŮ 🔥 - VYNUCENÝ DEPLOY
           </div>
