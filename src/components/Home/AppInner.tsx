@@ -1,18 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
-
-interface Offer {
-  id: number
-  title: string
-  description: string
-  price: number
-  location: string
-  category: string
-  image: string
-  provider: string
-  rating: number
-  views: number
-}
+import { DatabaseService, Offer } from '@/lib/supabase'
 
 interface FilterProps {
   query: string
@@ -24,69 +12,6 @@ interface FilterProps {
   sortBy: string
   setSortBy: (sortBy: string) => void
 }
-
-const mockOffers: Offer[] = [
-  {
-    id: 1,
-    title: "Masáž zad 45 min",
-    description: "Profesionální masáž zad s aromaterapií",
-    price: 800,
-    location: "Praha 1",
-    category: "beauty",
-    image: "/images/massage.jpg",
-    provider: "Relax Studio",
-    rating: 4.8,
-    views: 156
-  },
-  {
-    id: 2,
-    title: "Lash lifting + brow shape",
-    description: "Zdvihnutí řas a tvarování obočí",
-    price: 1200,
-    location: "Praha 2",
-    category: "beauty",
-    image: "/images/lashes.jpg",
-    provider: "Beauty Studio",
-    rating: 4.9,
-    views: 234
-  },
-  {
-    id: 3,
-    title: "Manikúra s gelovým lakem",
-    description: "Kompletní péče o nehty s dlouhodobým gelovým lakem",
-    price: 650,
-    location: "Praha 3",
-    category: "beauty",
-    image: "/images/manicure.jpg",
-    provider: "Nail Art Studio",
-    rating: 4.7,
-    views: 89
-  },
-  {
-    id: 4,
-    title: "Osobní trénink fitness",
-    description: "Individuální fitness trénink s osobním trenérem",
-    price: 900,
-    location: "Praha 4",
-    category: "sport",
-    image: "/images/fitness.jpg",
-    provider: "Fit Zone",
-    rating: 4.6,
-    views: 145
-  },
-  {
-    id: 5,
-    title: "Rodinné fotení v ateliéru",
-    description: "Profesionální fotografování rodinných portrétů",
-    price: 2500,
-    location: "Praha 5",
-    category: "photo",
-    image: "/images/photography.jpg",
-    provider: "Photo Studio",
-    rating: 4.9,
-    views: 78
-  }
-]
 
 const FilterBar: React.FC<FilterProps> = ({ 
   query, setQuery, 
@@ -164,7 +89,7 @@ const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => (
         <h3 className="text-lg font-semibold text-gray-900">{offer.title}</h3>
         <div className="flex items-center">
           <span className="text-yellow-400 mr-1">★</span>
-          <span className="text-sm text-gray-600">{offer.rating}</span>
+          <span className="text-sm text-gray-600">{offer.provider?.rating || 0}</span>
         </div>
       </div>
       <p className="text-gray-600 text-sm mb-2">{offer.description}</p>
@@ -173,8 +98,11 @@ const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => (
         <span className="text-lg font-bold text-blue-600">{offer.price} Kč</span>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-sm text-gray-500">{offer.provider}</span>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
+        <span className="text-sm text-gray-500">{offer.provider?.name || 'Neznámý poskytovatel'}</span>
+        <button 
+          onClick={() => console.log('Zobrazit detail nabídky:', offer.id)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+        >
           Zobrazit detail
         </button>
       </div>
@@ -212,34 +140,143 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => (
   </div>
 )
 
+const LoadingSpinner: React.FC = () => (
+  <div className="flex justify-center items-center py-12">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+)
+
 export default function AppInner() {
   const [accountOpen, setAccountOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [category, setCategory] = useState("all")
   const [location, setLocation] = useState("")
   const [sortBy, setSortBy] = useState("relevance")
+  const [offers, setOffers] = useState<Offer[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const filteredOffers = mockOffers.filter(offer => {
-    const matchesQuery = offer.title.toLowerCase().includes(query.toLowerCase()) ||
-                        offer.description.toLowerCase().includes(query.toLowerCase())
-    const matchesCategory = category === "all" || offer.category === category
-    const matchesLocation = location === "" || offer.location.toLowerCase().includes(location.toLowerCase())
-    
-    return matchesQuery && matchesCategory && matchesLocation
-  })
-
-  const sortedOffers = [...filteredOffers].sort((a, b) => {
-    switch (sortBy) {
-      case "priceAsc":
-        return a.price - b.price
-      case "priceDesc":
-        return b.price - a.price
-      case "rating":
-        return b.rating - a.rating
-      default:
-        return b.views - a.views
+  // Načtení nabídek z databáze
+  useEffect(() => {
+    const loadOffers = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const data = await DatabaseService.getOffers({
+          query,
+          category: category === "all" ? undefined : category,
+          location,
+          sortBy: sortBy as any
+        })
+        
+        setOffers(data || [])
+      } catch (err) {
+        console.error('Chyba při načítání nabídek:', err)
+        setError('Chyba při načítání nabídek. Zkuste to později.')
+        
+        // Fallback na mock data pro demo
+        const mockOffers: Offer[] = [
+          {
+            id: '1',
+            title: "Masáž zad 45 min",
+            description: "Profesionální masáž zad s aromaterapií",
+            price: 800,
+            location: "Praha 1",
+            category: "beauty",
+            provider_id: '1',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 156,
+            provider: {
+              name: "Relax Studio",
+              rating: 4.8
+            }
+          },
+          {
+            id: '2',
+            title: "Lash lifting + brow shape",
+            description: "Zdvihnutí řas a tvarování obočí",
+            price: 1200,
+            location: "Praha 2",
+            category: "beauty",
+            provider_id: '2',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 234,
+            provider: {
+              name: "Beauty Studio",
+              rating: 4.9
+            }
+          },
+          {
+            id: '3',
+            title: "Manikúra s gelovým lakem",
+            description: "Kompletní péče o nehty s dlouhodobým gelovým lakem",
+            price: 650,
+            location: "Praha 3",
+            category: "beauty",
+            provider_id: '3',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 89,
+            provider: {
+              name: "Nail Art Studio",
+              rating: 4.7
+            }
+          },
+          {
+            id: '4',
+            title: "Osobní trénink fitness",
+            description: "Individuální fitness trénink s osobním trenérem",
+            price: 900,
+            location: "Praha 4",
+            category: "sport",
+            provider_id: '4',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 145,
+            provider: {
+              name: "Fit Zone",
+              rating: 4.6
+            }
+          },
+          {
+            id: '5',
+            title: "Rodinné fotení v ateliéru",
+            description: "Profesionální fotografování rodinných portrétů",
+            price: 2500,
+            location: "Praha 5",
+            category: "photo",
+            provider_id: '5',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 78,
+            provider: {
+              name: "Photo Studio",
+              rating: 4.9
+            }
+          }
+        ]
+        
+        setOffers(mockOffers)
+      } finally {
+        setLoading(false)
+      }
     }
-  })
+
+    // Debounce pro vyhledávání
+    const timer = setTimeout(() => {
+      loadOffers()
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [query, category, location, sortBy])
 
   return (
     <>
@@ -286,17 +323,30 @@ export default function AppInner() {
 
           <div className="mb-4 flex justify-between items-center">
             <p className="text-gray-600">
-              Nalezeno {sortedOffers.length} nabídek
+              {loading ? 'Načítání...' : `Nalezeno ${offers.length} nabídek`}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedOffers.map(offer => (
-              <OfferCard key={offer.id} offer={offer} />
-            ))}
-          </div>
+          {error && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <p className="text-yellow-800">{error}</p>
+              <p className="text-yellow-600 text-sm mt-1">
+                Zobrazují se ukázková data pro demonstraci funkcionality.
+              </p>
+            </div>
+          )}
 
-          {sortedOffers.length === 0 && (
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {offers.map(offer => (
+                <OfferCard key={offer.id} offer={offer} />
+              ))}
+            </div>
+          )}
+
+          {!loading && offers.length === 0 && !error && (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
             </div>
