@@ -105,9 +105,10 @@ const FilterBar: React.FC<FilterProps & { totalCount: number }> = ({
         >
           <option value="all">Všechny kategorie</option>
           <option value="beauty">Beauty & Wellbeing</option>
-          <option value="sport">Sport & Fitness</option>
-          <option value="photo">Fotografování</option>
           <option value="gastro">Gastro</option>
+          <option value="accommodation">Ubytování</option>
+          <option value="reality">Reality</option>
+          <option value="crafts">Řemesla</option>
         </select>
       </div>
 
