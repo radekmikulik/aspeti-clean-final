@@ -13,66 +13,49 @@ interface FilterProps {
   setSortBy: (sortBy: string) => void
 }
 
-// Komponenta pro 5 velkých kategorií panelů
+// Komponenta pro 5 velkých kategorií panelů - ZJEDNODUŠENÁ VERZE
 const CategoryPanels: React.FC<{ 
   selectedCategory: string
   setSelectedCategory: (category: string) => void 
 }> = ({ selectedCategory, setSelectedCategory }) => {
   const categories = [
-    {
-      id: 'beauty',
-      name: 'Beauty & Wellbeing',
-      icon: '💄',
-      color: 'from-pink-400 to-purple-500',
-      count: 3
-    },
-    {
-      id: 'gastro', 
-      name: 'Gastro',
-      icon: '🍽️',
-      color: 'from-orange-400 to-red-500',
-      count: 1
-    },
-    {
-      id: 'accommodation',
-      name: 'Ubytování', 
-      icon: '🏨',
-      color: 'from-blue-400 to-indigo-500',
-      count: 2
-    },
-    {
-      id: 'reality',
-      name: 'Reality',
-      icon: '🏠',
-      color: 'from-green-400 to-teal-500', 
-      count: 1
-    },
-    {
-      id: 'crafts',
-      name: 'Řemesla',
-      icon: '🔧',
-      color: 'from-yellow-400 to-orange-500',
-      count: 1
-    }
+    { id: 'beauty', name: 'Beauty & Wellbeing', icon: '💄', count: 3, bgColor: '#ec4899' },
+    { id: 'gastro', name: 'Gastro', icon: '🍽️', count: 1, bgColor: '#f97316' },
+    { id: 'accommodation', name: 'Ubytování', icon: '🏨', count: 2, bgColor: '#3b82f6' },
+    { id: 'reality', name: 'Reality', icon: '🏠', count: 1, bgColor: '#10b981' },
+    { id: 'crafts', name: 'Řemesla', icon: '🔧', count: 1, bgColor: '#f59e0b' }
   ]
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+    <div style={{ 
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+      gap: '16px', 
+      marginBottom: '32px' 
+    }}>
       {categories.map((cat) => (
         <div
           key={cat.id}
           onClick={() => setSelectedCategory(cat.id)}
-          className={`
-            relative overflow-hidden rounded-lg cursor-pointer transform transition-all duration-200 hover:scale-105
-            ${selectedCategory === cat.id ? 'ring-4 ring-blue-500 ring-opacity-50' : ''}
-          `}
+          style={{
+            backgroundColor: cat.bgColor,
+            color: 'white',
+            padding: '24px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            minHeight: '120px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            transform: selectedCategory === cat.id ? 'scale(1.05)' : 'scale(1)',
+            boxShadow: selectedCategory === cat.id ? '0 0 0 4px rgba(59, 130, 246, 0.5)' : 'none',
+            transition: 'all 0.2s'
+          }}
         >
-          <div className={`bg-gradient-to-br ${cat.color} p-6 text-white min-h-[120px] flex flex-col justify-between`}>
-            <div className="text-3xl mb-2">{cat.icon}</div>
-            <div>
-              <h3 className="font-semibold text-sm mb-1">{cat.name}</h3>
-              <p className="text-xs opacity-90">{cat.count} nabídek</p>
-            </div>
+          <div style={{ fontSize: '32px', marginBottom: '8px' }}>{cat.icon}</div>
+          <div>
+            <h3 style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '4px' }}>{cat.name}</h3>
+            <p style={{ fontSize: '12px', opacity: 0.9 }}>{cat.count} nabídek</p>
           </div>
         </div>
       ))}
