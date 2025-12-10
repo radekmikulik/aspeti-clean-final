@@ -507,6 +507,11 @@ export default function AppInner() {
             <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
           </div>
 
+          <CategoryPanels
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
+
 
           
 
