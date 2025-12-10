@@ -505,8 +505,10 @@ export default function AppInner() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
+          {console.log('Main render - accountOpen:', accountOpen)} {/* DEBUG */}
           {!accountOpen && (
             <>
+              {console.log('Katalog section renderuje!')} {/* DEBUG */}
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
                 <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
