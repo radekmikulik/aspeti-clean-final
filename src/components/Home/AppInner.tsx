@@ -15,8 +15,9 @@ interface FilterProps {
   setSortBy: (sortBy: string) => void
 }
 
-// Komponenta pro 5 velkých kategorií panelů - ZJEDNODUŠENÁ VERZE
+// Komponenta pro 5 velkých kategorií panelů - CACHE BUSTER v4
 // BUILD FIX APPLIED: baseUrl configured for @ alias resolution
+// CACHE CLEAR: Force new build for Vercel
 const CategoryPanels: React.FC<{ 
   selectedCategory: string
   setSelectedCategory: (category: string) => void 
