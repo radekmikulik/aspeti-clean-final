@@ -515,9 +515,9 @@ export default function AppInner() {
             <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
           </div>
 
-          {/* ÚPLNĚ JEDNODUCHÁ VERZE - ZÁKLADNÍ HTML */}
+          {/* ÚPLNĚ JEDNODUCHÁ VERZE - ZÁKLADNÍ HTML - FORCED DEPLOY */}
           <div style={{backgroundColor: '#ff0000', color: 'white', padding: '20px', marginBottom: '20px', fontWeight: 'bold', textAlign: 'center'}}>
-            🔥 5 KATEGORIÍ PANELŮ 🔥
+            🔥 5 KATEGORIÍ PANELŮ 🔥 - VYNUCENÝ DEPLOY
           </div>
           
           <div style={{display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap'}}>
