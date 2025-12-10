@@ -13,13 +13,87 @@ interface FilterProps {
   setSortBy: (sortBy: string) => void
 }
 
-const FilterBar: React.FC<FilterProps> = ({ 
+// Komponenta pro 5 velkých kategorií panelů
+const CategoryPanels: React.FC<{ 
+  selectedCategory: string
+  setSelectedCategory: (category: string) => void 
+}> = ({ selectedCategory, setSelectedCategory }) => {
+  const categories = [
+    {
+      id: 'beauty',
+      name: 'Beauty & Wellbeing',
+      icon: '💄',
+      color: 'from-pink-400 to-purple-500',
+      count: 3
+    },
+    {
+      id: 'gastro', 
+      name: 'Gastro',
+      icon: '🍽️',
+      color: 'from-orange-400 to-red-500',
+      count: 1
+    },
+    {
+      id: 'accommodation',
+      name: 'Ubytování', 
+      icon: '🏨',
+      color: 'from-blue-400 to-indigo-500',
+      count: 2
+    },
+    {
+      id: 'reality',
+      name: 'Reality',
+      icon: '🏠',
+      color: 'from-green-400 to-teal-500', 
+      count: 1
+    },
+    {
+      id: 'crafts',
+      name: 'Řemesla',
+      icon: '🔧',
+      color: 'from-yellow-400 to-orange-500',
+      count: 1
+    }
+  ]
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+      {categories.map((cat) => (
+        <div
+          key={cat.id}
+          onClick={() => setSelectedCategory(cat.id)}
+          className={`
+            relative overflow-hidden rounded-lg cursor-pointer transform transition-all duration-200 hover:scale-105
+            ${selectedCategory === cat.id ? 'ring-4 ring-blue-500 ring-opacity-50' : ''}
+          `}
+        >
+          <div className={`bg-gradient-to-br ${cat.color} p-6 text-white min-h-[120px] flex flex-col justify-between`}>
+            <div className="text-3xl mb-2">{cat.icon}</div>
+            <div>
+              <h3 className="font-semibold text-sm mb-1">{cat.name}</h3>
+              <p className="text-xs opacity-90">{cat.count} nabídek</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const FilterBar: React.FC<FilterProps & { totalCount: number }> = ({ 
   query, setQuery, 
   category, setCategory, 
   location, setLocation, 
-  sortBy, setSortBy 
+  sortBy, setSortBy,
+  totalCount
 }) => (
   <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-lg font-semibold text-gray-900">Filtr</h3>
+      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+        Nalezeno: {totalCount}
+      </span>
+    </div>
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Vyhledávání */}
       <div>
@@ -148,6 +222,7 @@ const LoadingSpinner: React.FC = () => (
 
 export default function AppInner() {
   const [accountOpen, setAccountOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState("all")
   const [query, setQuery] = useState("")
   const [category, setCategory] = useState("all")
   const [location, setLocation] = useState("")
@@ -155,6 +230,15 @@ export default function AppInner() {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Propojení vybraných kategorií s filtrem
+  useEffect(() => {
+    if (selectedCategory === "all") {
+      setCategory("all")
+    } else {
+      setCategory(selectedCategory)
+    }
+  }, [selectedCategory, setCategory])
 
   // Načtení nabídek z databáze
   useEffect(() => {
@@ -229,6 +313,40 @@ export default function AppInner() {
             }
           },
           {
+            id: '10',
+            title: "Chemický peeling obličeje",
+            description: "Hloubková omlazení pleti chemickým peelingem",
+            price: 2000,
+            location: "Praha 2",
+            category: "beauty",
+            provider_id: '10',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 145,
+            provider: {
+              name: "Skin Clinic",
+              rating: 4.9
+            }
+          },
+          {
+            id: '11',
+            title: "Wellness pobyt na horách",
+            description: "3 dny relaxace v horském hotelu",
+            price: 4200,
+            location: "Špindlerův Mlýn",
+            category: "accommodation",
+            provider_id: '11',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 189,
+            provider: {
+              name: "Mountain Spa",
+              rating: 4.8
+            }
+          },
+          {
             id: '4',
             title: "Osobní trénink fitness",
             description: "Individuální fitness trénink s osobním trenérem",
@@ -261,6 +379,74 @@ export default function AppInner() {
               name: "Photo Studio",
               rating: 4.9
             }
+          },
+          {
+            id: '6',
+            title: "Večeře pro dva",
+            description: "Romantická večeře ve francouzském stylu",
+            price: 1500,
+            location: "Praha 1",
+            category: "gastro",
+            provider_id: '6',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 203,
+            provider: {
+              name: "Le Chic",
+              rating: 4.8
+            }
+          },
+          {
+            id: '7',
+            title: "Wellness víkend",
+            description: "2 noci s wellness programem",
+            price: 3500,
+            location: "Karlovy Vary",
+            category: "accommodation",
+            provider_id: '7',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 167,
+            provider: {
+              name: "Spa Resort",
+              rating: 4.7
+            }
+          },
+          {
+            id: '8',
+            title: "Pronájem bytu 2+kk",
+            description: "Moderní byt v centru města",
+            price: 15000,
+            location: "Praha 1",
+            category: "reality",
+            provider_id: '8',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 234,
+            provider: {
+              name: "Real Plus",
+              rating: 4.5
+            }
+          },
+          {
+            id: '9',
+            title: "Oprava kola",
+            description: "Kompletní servis jízdního kola",
+            price: 600,
+            location: "Praha 3",
+            category: "crafts",
+            provider_id: '9',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true,
+            views_count: 89,
+            provider: {
+              name: "Bike Service",
+              rating: 4.6
+            }
           }
         ]
         
@@ -291,72 +477,103 @@ export default function AppInner() {
         <header className="bg-white shadow-sm border-b border-gray-200">
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-blue-600">ASPETi</h1>
               <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setAccountOpen(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Můj účet
-                </button>
+                <h1 className="text-2xl font-bold text-blue-600">ASPETi</h1>
+                {!accountOpen && (
+                  <span className="text-sm text-gray-500 hidden md:inline">
+                    Katalog nabídek
+                  </span>
+                )}
+                {accountOpen && (
+                  <span className="text-sm text-gray-500 hidden md:inline">
+                    Můj účet
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center space-x-4">
+                {!accountOpen ? (
+                  <button
+                    onClick={() => setAccountOpen(true)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center space-x-2"
+                  >
+                    <span>Můj účet</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setAccountOpen(false)}
+                    className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition flex items-center space-x-2"
+                  >
+                    <span>Zpět na katalog</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
-            <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
-          </div>
+          {!accountOpen && (
+            <>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
+                <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
+              </div>
 
-          <FilterBar
-            query={query}
-            setQuery={setQuery}
-            category={category}
-            setCategory={setCategory}
-            location={location}
-            setLocation={setLocation}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-          />
+              <CategoryPanels 
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
 
-          <div className="mb-4 flex justify-between items-center">
-            <p className="text-gray-600">
-              {loading ? 'Načítání...' : `Nalezeno ${offers.length} nabídek`}
-            </p>
-          </div>
+              <FilterBar
+                query={query}
+                setQuery={setQuery}
+                category={category}
+                setCategory={setCategory}
+                location={location}
+                setLocation={setLocation}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                totalCount={offers.length}
+              />
 
-          {error && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <p className="text-yellow-800">{error}</p>
-              <p className="text-yellow-600 text-sm mt-1">
-                Zobrazují se ukázková data pro demonstraci funkcionality.
-              </p>
-            </div>
+              <div className="mb-4 flex justify-between items-center">
+                <p className="text-gray-600">
+                  {loading ? 'Načítání...' : `Nalezeno ${offers.length} nabídek`}
+                </p>
+              </div>
+
+              {error && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                  <p className="text-yellow-800">{error}</p>
+                  <p className="text-yellow-600 text-sm mt-1">
+                    Zobrazují se ukázková data pro demonstraci funkcionality.
+                  </p>
+                </div>
+              )}
+
+              {loading ? (
+                <LoadingSpinner />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {offers.map(offer => (
+                    <OfferCard key={offer.id} offer={offer} />
+                  ))}
+                </div>
+              )}
+
+              {!loading && offers.length === 0 && !error && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 text-lg">Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
+                </div>
+              )}
+            </>
           )}
 
-          {loading ? (
-            <LoadingSpinner />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {offers.map(offer => (
-                <OfferCard key={offer.id} offer={offer} />
-              ))}
-            </div>
-          )}
-
-          {!loading && offers.length === 0 && !error && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
-            </div>
+          {accountOpen && (
+            <AccountView onClose={() => setAccountOpen(false)} />
           )}
         </main>
       </div>
-
-      {accountOpen && (
-        <AccountView onClose={() => setAccountOpen(false)} />
-      )}
     </>
   )
 }
