@@ -26,6 +26,7 @@ export interface Offer {
   updated_at: string
   is_active: boolean
   views_count: number
+  vip: boolean
   provider?: {
     name: string
     rating: number
