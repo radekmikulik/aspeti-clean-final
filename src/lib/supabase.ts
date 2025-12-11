@@ -119,7 +119,7 @@ export class DatabaseService {
           query = query.order('price', { ascending: false })
           break
         case 'rating':
-          query = query.order('providers.rating', { ascending: false })
+          query = query.order('provider.rating', { ascending: false })
           break
         default:
           query = query.order('created_at', { ascending: false })
