@@ -171,9 +171,22 @@ export class DatabaseService {
   // Inkrementace počtu zobrazení nabídky
   static async incrementOfferViews(offerId: string) {
     try {
+      // Nejprve načteme současnou hodnotu
+      const { data: offer, error: fetchError } = await supabase
+        .from('offers')
+        .select('views_count')
+        .eq('id', offerId)
+        .single()
+
+      if (fetchError) {
+        console.error('Supabase fetch error:', fetchError)
+        throw fetchError
+      }
+
+      // Pak aktualizujeme s novou hodnotou
       const { error } = await supabase
         .from('offers')
-        .update({ views_count: supabase.sql`views_count + 1` })
+        .update({ views_count: (offer?.views_count || 0) + 1 })
         .eq('id', offerId)
 
       if (error) {
