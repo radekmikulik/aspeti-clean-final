@@ -240,6 +240,9 @@ const LoadingSpinner: React.FC = () => (
 )
 
 export default function AppInner() {
+  // IMMEDIATE TEST - should appear in console immediately
+  console.log('🔥 IMMEDIATE TEST: AppInner component mounted!')
+  
   const [accountOpen, setAccountOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [query, setQuery] = useState("")
@@ -249,6 +252,8 @@ export default function AppInner() {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  console.log('📦 AppInner state initialized:', { accountOpen, selectedCategory, offers: offers.length })
 
   // Propojení vybraných kategorií s filtrem
   useEffect(() => {
