@@ -15,14 +15,11 @@ interface FilterProps {
   setSortBy: (sortBy: string) => void
 }
 
-// Komponenta pro 5 velkých kategorií panelů - CACHE BUSTER v4
-// BUILD FIX APPLIED: baseUrl configured for @ alias resolution
-// CACHE CLEAR: Force new build for Vercel
+// Komponenta pro 5 velkých kategorií panelů
 const CategoryPanels: React.FC<{ 
   selectedCategory: string
   setSelectedCategory: (category: string) => void 
 }> = ({ selectedCategory, setSelectedCategory }) => {
-  console.log('CategoryPanels se renderuje!', selectedCategory) // DEBUG
   
   const categories = [
     { id: 'beauty', name: 'Beauty & Wellbeing', icon: '💄', count: 3, bgColor: '#ec4899' },
@@ -41,7 +38,6 @@ const CategoryPanels: React.FC<{
         <div
           key={cat.id}
           onClick={() => {
-            console.log('Kategorie klik:', cat.id) // DEBUG
             setSelectedCategory(cat.id)
           }}
           className={`

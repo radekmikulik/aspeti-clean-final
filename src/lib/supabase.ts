@@ -1,6 +1,14 @@
 // Database types and service
 // Implementation for ASPETi application
 
+import { createClient } from '@supabase/supabase-js'
+
+// Supabase client initialization
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+export const supabase = createClient(supabaseUrl, supabaseKey)
+
 export interface Offer {
   id: string
   title: string
@@ -67,67 +75,272 @@ export class DatabaseService {
     location?: string
     sortBy?: 'relevance' | 'priceAsc' | 'priceDesc' | 'rating'
   } = {}) {
-    // Dočasně vracíme prázdný výsledek dokud nemáme Supabase credentials
-    return []
+    try {
+      let query = supabase
+        .from('offers')
+        .select(`
+          *,
+          provider:providers(name, rating)
+        `)
+        .eq('is_active', true)
+
+      // Filtrování podle vyhledávání
+      if (filters.query) {
+        query = query.or(`title.ilike.%${filters.query}%,description.ilike.%${filters.query}%`)
+      }
+
+      // Filtrování podle kategorie
+      if (filters.category) {
+        query = query.eq('category', filters.category)
+      }
+
+      // Filtrování podle lokality
+      if (filters.location) {
+        query = query.ilike('location', `%${filters.location}%`)
+      }
+
+      // Řazení
+      switch (filters.sortBy) {
+        case 'priceAsc':
+          query = query.order('price', { ascending: true })
+          break
+        case 'priceDesc':
+          query = query.order('price', { ascending: false })
+          break
+        case 'rating':
+          query = query.order('providers.rating', { ascending: false })
+          break
+        default:
+          query = query.order('created_at', { ascending: false })
+      }
+
+      const { data, error } = await query
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data || []
+    } catch (error) {
+      console.error('Chyba při načítání nabídek:', error)
+      throw error
+    }
   }
 
   // Získání jedné nabídky podle ID
   static async getOfferById(id: string) {
-    // Dočasně vracíme null dokud nemáme Supabase credentials
-    return null
+    try {
+      const { data, error } = await supabase
+        .from('offers')
+        .select(`
+          *,
+          provider:providers(name, rating)
+        `)
+        .eq('id', id)
+        .eq('is_active', true)
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      console.error('Chyba při načítání nabídky:', error)
+      throw error
+    }
   }
 
   // Inkrementace počtu zobrazení nabídky
   static async incrementOfferViews(offerId: string) {
-    // Dočasně neimplementováno
-    return
+    try {
+      const { error } = await supabase
+        .from('offers')
+        .update({ views_count: supabase.sql`views_count + 1` })
+        .eq('id', offerId)
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+    } catch (error) {
+      console.error('Chyba při inkrementaci zobrazení:', error)
+    }
   }
 
   // Vytvoření nové nabídky (pro poskytovatele)
   static async createOffer(offerData: Omit<Offer, 'id' | 'created_at' | 'updated_at' | 'views_count'>) {
-    // Dočasně neimplementováno
-    return null
+    try {
+      const { data, error } = await supabase
+        .from('offers')
+        .insert([offerData])
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      console.error('Chyba při vytváření nabídky:', error)
+      throw error
+    }
   }
 
   // Aktualizace nabídky
   static async updateOffer(id: string, updates: Partial<Offer>) {
-    // Dočasně neimplementováno
-    return null
+    try {
+      const { data, error } = await supabase
+        .from('offers')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      console.error('Chyba při aktualizaci nabídky:', error)
+      throw error
+    }
   }
 
   // Smazání nabídky (soft delete)
   static async deleteOffer(id: string) {
-    // Dočasně neimplementováno
-    return
+    try {
+      const { error } = await supabase
+        .from('offers')
+        .update({ is_active: false })
+        .eq('id', id)
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+    } catch (error) {
+      console.error('Chyba při mazání nabídky:', error)
+      throw error
+    }
   }
 
   // Získání rezervací pro poskytovatele
   static async getProviderReservations(providerId: string) {
-    // Dočasně neimplementováno
-    return []
+    try {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select(`
+          *,
+          offer:offers(title, price, location)
+        `)
+        .eq('provider_id', providerId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data || []
+    } catch (error) {
+      console.error('Chyba při načítání rezervací:', error)
+      throw error
+    }
   }
 
   // Aktualizace stavu rezervace
   static async updateReservationStatus(id: string, status: 'pending' | 'confirmed' | 'cancelled') {
-    // Dočasně neimplementováno
-    return null
+    try {
+      const { data, error } = await supabase
+        .from('reservations')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      console.error('Chyba při aktualizaci stavu rezervace:', error)
+      throw error
+    }
   }
 
   // Získání zpráv pro poskytovatele
   static async getProviderMessages(providerId: string) {
-    // Dočasně neimplementováno
-    return []
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select(`
+          *,
+          offer:offers(title)
+        `)
+        .eq('provider_id', providerId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data || []
+    } catch (error) {
+      console.error('Chyba při načítání zpráv:', error)
+      throw error
+    }
   }
 
   // Označení zprávy jako přečtené
   static async markMessageAsRead(id: string) {
-    // Dočasně neimplementováno
-    return null
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      console.error('Chyba při označování zprávy:', error)
+      throw error
+    }
   }
 
   // Získání statistik poskytovatele
   static async getProviderStats(providerId: string) {
-    // Dočasně neimplementováno
-    return null
+    try {
+      const { data, error } = await supabase
+        .from('provider_stats')
+        .select('*')
+        .eq('provider_id', providerId)
+        .single()
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      console.error('Chyba při načítání statistik:', error)
+      throw error
+    }
   }
 }
