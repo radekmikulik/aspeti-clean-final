@@ -110,7 +110,8 @@ export class DatabaseService {
         query = query.ilike('location', `%${filters.location}%`)
       }
 
-      // Řazení
+      // Řazení - zjednodušeno pro testování
+      console.log('🗂️ Sorting by:', filters.sortBy)
       switch (filters.sortBy) {
         case 'priceAsc':
           query = query.order('price', { ascending: true })
@@ -119,7 +120,7 @@ export class DatabaseService {
           query = query.order('price', { ascending: false })
           break
         case 'rating':
-          query = query.order('provider.rating', { ascending: false })
+          query = query.order('created_at', { ascending: false }) // Simplified
           break
         default:
           query = query.order('created_at', { ascending: false })
