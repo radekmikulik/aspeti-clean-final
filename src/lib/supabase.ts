@@ -87,10 +87,7 @@ export class DatabaseService {
       
       let query = supabase
         .from('offers')
-        .select(`
-          *,
-          provider:providers(name, rating)
-        `)
+        .select('*')  // Simplified - no joins for now
         .eq('is_active', true)
       
       console.log('🔍 Starting database query...')
