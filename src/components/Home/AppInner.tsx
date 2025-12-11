@@ -262,10 +262,13 @@ export default function AppInner() {
   // Načtení nabídek z databáze
   useEffect(() => {
     const loadOffers = async () => {
+      console.log('🚀 loadOffers called with:', { query, category, location, sortBy })
+      
       try {
         setLoading(true)
         setError(null)
         
+        console.log('📡 Calling DatabaseService.getOffers...')
         const data = await DatabaseService.getOffers({
           query,
           category: category === "all" ? undefined : category,
@@ -273,11 +276,17 @@ export default function AppInner() {
           sortBy: sortBy as any
         })
         
+        console.log('✅ DatabaseService returned data:', data?.length || 0, 'offers')
         setOffers(data || [])
+        
+        if (!data || data.length === 0) {
+          console.log('⚠️ No data returned from database, falling back to mock data')
+        }
       } catch (err) {
-        console.error('Chyba při načítání nabídek:', err)
+        console.error('❌ Chyba při načítání nabídek:', err)
         setError('Chyba při načítání nabídek. Zkuste to později.')
         
+        console.log('📋 Loading mock data as fallback...')
         // Fallback na mock data pro demo
         const mockOffers: Offer[] = [
           {
@@ -479,6 +488,10 @@ export default function AppInner() {
             }
           }
         ]
+        
+        console.log('📊 Setting mock offers:', mockOffers.length, 'offers')
+        console.log('🎯 VIP offers in mock:', mockOffers.filter(o => o.vip).length)
+        console.log('📋 Standard offers in mock:', mockOffers.filter(o => !o.vip).length)
         
         setOffers(mockOffers)
       } finally {
