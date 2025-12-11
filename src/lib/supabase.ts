@@ -4,12 +4,14 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Supabase client initialization
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bwwulsqzujrokxmyepzg.supabase.co'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3d3Vsc3F6dWpyb2t4bXllcHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NDY4MzksImV4cCI6MjA4MTAyMjgzOX0.OW9W0gg3jpgn1Wb6msswNHlq5RLpCfTbO-L30jILopI'
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Missing Supabase environment variables')
 }
+
+console.log('🔌 Supabase connected to:', supabaseUrl)
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
@@ -81,6 +83,8 @@ export class DatabaseService {
     sortBy?: 'relevance' | 'priceAsc' | 'priceDesc' | 'rating'
   } = {}) {
     try {
+      console.log('📊 DatabaseService.getOffers called with filters:', filters)
+      
       let query = supabase
         .from('offers')
         .select(`
@@ -88,6 +92,8 @@ export class DatabaseService {
           provider:providers(name, rating)
         `)
         .eq('is_active', true)
+      
+      console.log('🔍 Starting database query...')
 
       // Filtrování podle vyhledávání
       if (filters.query) {
@@ -121,11 +127,15 @@ export class DatabaseService {
 
       const { data, error } = await query
 
+      console.log('📊 Query result:', { data, error })
+      console.log('📈 Data length:', data?.length || 0)
+
       if (error) {
-        console.error('Supabase error:', error)
+        console.error('❌ Supabase error:', error)
         throw error
       }
 
+      console.log('✅ Returning data:', data?.length || 0, 'offers')
       return data || []
     } catch (error) {
       console.error('Chyba při načítání nabídek:', error)
