@@ -205,33 +205,255 @@ const StdCard: React.FC<{ offer: Offer }> = ({ offer }) => (
   </div>
 )
 
-const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => (
-  <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto m-4">
-    <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Můj účet poskytovatele</h2>
-      <button
-        onClick={onClose}
-        className="text-gray-400 hover:text-gray-600 text-2xl"
-      >
-        ×
-      </button>
+const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const [loading, setLoading] = useState(false)
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  
+  // Mock provider ID pro testování (v produkci by to bylo z auth)
+  const providerId = '11111111-1111-1111-1111-111111111111'
+
+  // Načtení dat dashboardu
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      setLoading(true)
+      try {
+        console.log('📊 Loading provider dashboard data...')
+        
+        const [credits, offers, stats, currentBalance] = await Promise.all([
+          DatabaseService.getProviderCredits(providerId),
+          DatabaseService.getProviderOffers(providerId),
+          DatabaseService.getProviderStats(providerId),
+          DatabaseService.getCurrentCreditBalance(providerId)
+        ])
+
+        setDashboardData({
+          credits,
+          offers,
+          stats,
+          currentBalance
+        })
+        
+        console.log('📊 Dashboard data loaded:', {
+          credits: credits?.length || 0,
+          offers: offers?.length || 0,
+          balance: currentBalance
+        })
+      } catch (error) {
+        console.error('Chyba při načítání dashboardu:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadDashboardData()
+  }, [providerId])
+
+  const tabs = [
+    { id: 'dashboard', name: 'Přehled', icon: '📊' },
+    { id: 'offers', name: 'Správa nabídek', icon: '📋' },
+    { id: 'credits', name: 'Můj kredit', icon: '💰' },
+    { id: 'messages', name: 'Zprávy', icon: '💬' }
+  ]
+
+  const renderDashboard = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-blue-800">Kredit</h4>
+          <p className="text-2xl font-bold text-blue-600">
+            {dashboardData?.currentBalance || 0} Kč
+          </p>
+          {dashboardData?.currentBalance < 20 && (
+            <p className="text-xs text-orange-600 mt-1">⚠️ Nízký kredit</p>
+          )}
+        </div>
+        
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-green-800">Nabídky</h4>
+          <p className="text-2xl font-bold text-green-600">
+            {dashboardData?.offers?.length || 0}
+          </p>
+          <p className="text-xs text-green-600 mt-1">Aktivní nabídky</p>
+        </div>
+        
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-purple-800">Zobrazení</h4>
+          <p className="text-2xl font-bold text-purple-600">
+            {dashboardData?.stats?.total_views || 0}
+          </p>
+          <p className="text-xs text-purple-600 mt-1">Celkem za měsíc</p>
+        </div>
+      </div>
+
+      {dashboardData?.currentBalance < 20 && (
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <span className="text-orange-600 mr-2">⚠️</span>
+            <div>
+              <h4 className="text-sm font-medium text-orange-800">Nízký kredit</h4>
+              <p className="text-sm text-orange-600">
+                Váš kredit klesl pod 20 Kč. Nabijte si kredit pro pokračování v reklamě.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-    <div className="p-6">
-      <div className="text-center py-12">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Přihlášení</h3>
-        <p className="text-gray-600 mb-6">Pro přístup k vašemu účtu se přihlaste</p>
-        <div className="space-y-4">
-          <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
-            Přihlásit se
-          </button>
-          <button className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition">
-            Registrovat se
-          </button>
+  )
+
+  const renderCredits = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Můj kredit</h3>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          Nabít kredit
+        </button>
+      </div>
+
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+        <h4 className="text-sm font-medium text-gray-800 mb-2">Aktuální zůstatek</h4>
+        <p className="text-3xl font-bold text-gray-900">
+          {dashboardData?.currentBalance || 0} Kč
+        </p>
+        {dashboardData?.currentBalance < 20 && (
+          <p className="text-sm text-orange-600 mt-2">⚠️ Nízký kredit - doporučujeme nabití</p>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-md font-semibold mb-4">Historie transakcí</h4>
+        <div className="space-y-2">
+          {dashboardData?.credits?.slice(0, 5).map((transaction: any) => (
+            <div key={transaction.id} className="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-lg">
+              <div>
+                <p className="text-sm font-medium">{transaction.description || 'Transakce'}</p>
+                <p className="text-xs text-gray-500">
+                  {new Date(transaction.created_at).toLocaleDateString('cs-CZ')}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className={`text-sm font-semibold ${
+                  transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {transaction.amount > 0 ? '+' : ''}{transaction.amount} Kč
+                </p>
+                <p className="text-xs text-gray-500">
+                  Zůstatek: {transaction.balance_after} Kč
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
-  </div>
-)
+  )
+
+  const renderOffers = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Správa nabídek</h3>
+        <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+          + Přidat nabídku
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        {dashboardData?.offers?.map((offer: any) => (
+          <div key={offer.id} className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <h4 className="text-md font-semibold text-gray-900">{offer.title}</h4>
+                <p className="text-sm text-gray-600 mt-1">{offer.description}</p>
+                <div className="flex items-center mt-2 space-x-4">
+                  <span className="text-sm text-gray-500">{offer.category}</span>
+                  <span className="text-sm text-gray-500">{offer.location}</span>
+                  <span className="text-sm font-semibold text-blue-600">{offer.price} Kč</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  offer.is_active 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  {offer.is_active ? 'Aktivní' : 'Neaktivní'}
+                </span>
+                <button className="text-blue-600 hover:text-blue-800 text-sm">
+                  Upravit
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
+  const renderMessages = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold">Zprávy a poptávky</h3>
+      <div className="text-center py-12 text-gray-500">
+        <p>Zatím žádné zprávy</p>
+        <p className="text-sm mt-2">Zprávy od zákazníků se zobrazí zde</p>
+      </div>
+    </div>
+  )
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard': return renderDashboard()
+      case 'credits': return renderCredits()
+      case 'offers': return renderOffers()
+      case 'messages': return renderMessages()
+      default: return renderDashboard()
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto m-4">
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Můj účet poskytovatele</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl"
+          >
+            ×
+          </button>
+        </div>
+        
+        {/* Tab navigace */}
+        <div className="flex space-x-1 mt-4 bg-gray-100 p-1 rounded-lg">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 flex items-center justify-center space-x-2 py-2 px-3 rounded-md text-sm font-medium transition ${
+                activeTab === tab.id
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <span>{tab.icon}</span>
+              <span>{tab.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div className="p-6">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          renderContent()
+        )}
+      </div>
+    </div>
+  )
+}
 
 const LoadingSpinner: React.FC = () => (
   <div className="flex justify-center items-center py-12">

@@ -73,6 +73,23 @@ export interface ProviderStats {
   updated_at: string
 }
 
+export interface CreditTransaction {
+  id: string
+  provider_id: string
+  amount: number
+  type: 'purchase' | 'usage' | 'refund'
+  description?: string
+  balance_after: number
+  created_at: string
+}
+
+export interface ProviderDashboardData {
+  credits: CreditTransaction[]
+  offers: Offer[]
+  stats: ProviderStats
+  currentBalance: number
+}
+
 export class DatabaseService {
   
   // Získání všech nabídek s filtrováním
@@ -367,6 +384,72 @@ export class DatabaseService {
     } catch (error) {
       console.error('Chyba při načítání statistik:', error)
       throw error
+    }
+  }
+
+  // Získání kreditních transakcí poskytovatele
+  static async getProviderCredits(providerId: string) {
+    try {
+      console.log('💰 Loading provider credits for:', providerId)
+      
+      const { data, error } = await supabase
+        .from('credit_transactions')
+        .select('*')
+        .eq('provider_id', providerId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      console.log('💰 Credits loaded:', data?.length || 0, 'transactions')
+      return data || []
+    } catch (error) {
+      console.error('Chyba při načítání kreditů:', error)
+      throw error
+    }
+  }
+
+  // Získání nabídek konkrétního poskytovatele
+  static async getProviderOffers(providerId: string) {
+    try {
+      console.log('📋 Loading provider offers for:', providerId)
+      
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('provider_id', providerId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      console.log('📋 Provider offers loaded:', data?.length || 0, 'offers')
+      return data || []
+    } catch (error) {
+      console.error('Chyba při načítání nabídek poskytovatele:', error)
+      throw error
+    }
+  }
+
+  // Získání aktuálního kreditového zůstatku
+  static async getCurrentCreditBalance(providerId: string) {
+    try {
+      const transactions = await this.getProviderCredits(providerId)
+      
+      if (!transactions || transactions.length === 0) {
+        return 0
+      }
+      
+      // Poslední transakce obsahuje aktuální zůstatek
+      const latestTransaction = transactions[0]
+      return latestTransaction.balance_after || 0
+    } catch (error) {
+      console.error('Chyba při načítání zůstatku:', error)
+      return 0
     }
   }
 }
