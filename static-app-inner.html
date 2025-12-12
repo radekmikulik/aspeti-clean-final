@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASPETi - Katalog nabídek</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ASPETi Barevné schéma */
+        .bg-aspeti-green { background-color: #2F4B40; }
+        .bg-aspeti-light { background-color: #E7EFEA; }
+        .bg-aspeti-bg { background-color: #F5F7F6; }
+        .text-aspeti-green { color: #2F4B40; }
+        .border-aspeti-green { border-color: #2F4B40; }
+        .ring-aspeti-green:focus { --tw-ring-color: #2F4B40; }
+        
+        /* ASPETi stylové komponenty */
+        .category-panel {
+            aspect-ratio: 1/1;
+            background: white;
+            border: 1px solid #D2DED8;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .category-panel:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .vip-card {
+            background: white;
+            border: 1px solid #DDE6E1;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .vip-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .std-card {
+            background: white;
+            border: 1px solid #DDE6E1;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .std-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-bar {
+            border: 1px solid #D2DED8;
+            background: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-bar.sticky {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        
+        .badge-vip {
+            background: #E7EFEA;
+            color: #2F4B40;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #C8D6CF;
+        }
+        
+        .badge-top {
+            background: #E7EFEA;
+            color: #2F4B40;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #C8D6CF;
+        }
+        
+        .badge-new {
+            background: #EBF4FF;
+            color: #1E40AF;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #BFDBFE;
+        }
+        
+        .discount-badge {
+            background: rgba(127, 155, 142, 0.92);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 0;
+            box-shadow: -16px 12px 10px -6px rgba(0,0,0,0.62), -24px 16px 18px -10px rgba(0,0,0,0.32);
+        }
+        
+        .category-label {
+            background: rgba(51, 91, 74, 0.58);
+            backdrop-filter: blur(1.5px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            text-align: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .category-label:hover {
+            background: rgba(51, 91, 74, 0.7);
+        }
+        
+        .stuck {
+            background: rgba(245, 247, 246, 0.85);
+            border-bottom: 1px solid #E0E8E3;
+        }
+        
+        .mobile-menu {
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Sticky filtr */
+        .sticky-filter {
+            position: sticky;
+            top: 56px;
+            z-index: 10;
+        }
+        
+        /* Responsive grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        @media (min-width: 640px) {
+            .categories-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .categories-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        .vip-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+        }
+        
+        @media (min-width: 768px) {
+            .vip-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .std-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+        }
+        
+        @media (min-width: 640px) {
+            .std-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .std-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-aspeti-bg">
+    <!-- HEADER -->
+    <header class="bg-[#CAD8D0] text-blue-900 sticky top-0 z-20 border-b border-[#B7C7BE]">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-14 items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="menuBtn" class="md:hidden rounded px-2 py-1 text-blue-900 hover:bg-[#E7EFEA] focus:outline-none focus:ring-2 focus:ring-[#2F4B40]" aria-label="Otevřít menu">
+                        ☰
+                    </button>
+                    <span class="text-xl font-semibold tracking-tight">ASPETi</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <nav class="hidden md:flex items-center gap-5 text-sm text-blue-900">
+                        <a href="#" class="hover:underline">Nabídky</a>
+                        <a href="#" class="hover:underline">Poskytovatelé</a>
+                        <a href="#" class="hover:underline">O projektu</a>
+                    </nav>
+                    <div class="flex items-center gap-2">
+                        <button class="hidden sm:inline-flex items-center rounded px-2 py-0.5 text-sm text-blue-900/90 hover:text-blue-900 hover:underline focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Přihlásit</button>
+                        <button class="hidden sm:inline-flex items-center rounded-sm border border-[#C8D6CF] px-2 py-0.5 text-sm text-blue-900 bg-transparent hover:bg-[#E7EFEA] focus:outline-none focus:ring-2 focus:ring-blue-900">Registrovat</button>
+                        <button id="accountBtn" class="inline-flex items-center rounded-sm border border-[#2F4B40] bg-[#2F4B40] px-2 py-0.5 text-sm text-white hover:opacity-90">Můj účet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="fixed inset-0 z-30 md:hidden hidden">
+        <div class="absolute inset-0 bg-black/30" onclick="closeMobileMenu()"></div>
+        <div class="absolute right-0 top-0 h-full w-4/5 max-w-xs mobile-menu p-4">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-base font-semibold text-blue-900">Menu</span>
+                <button class="rounded px-2 py-1 hover:bg-[#E7EFEA]" onclick="closeMobileMenu()" aria-label="Zavřít">✕</button>
+            </div>
+            <nav class="flex flex-col gap-2 text-sm text-blue-900">
+                <a href="#" class="rounded px-2 py-2 hover:bg-[#E7EFEA]">Nabídky</a>
+                <a href="#" class="rounded px-2 py-2 hover:bg-[#E7EFEA]">Poskytovatelé</a>
+                <a href="#" class="rounded px-2 py-2 hover:bg-[#E7EFEA]">O projektu</a>
+            </nav>
+            <div class="mt-6 grid grid-cols-2 gap-2">
+                <button class="rounded-sm border border-[#C8D6CF] px-3 py-2 text-sm text-blue-900 hover:bg-[#E7EFEA]">Přihlásit</button>
+                <button class="rounded-sm border border-[#2F4B40] bg-[#2F4B40] px-3 py-2 text-sm text-white hover:opacity-90">Registrovat</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- CATEGORY PANELS -->
+        <section class="categories-grid gap-4">
+            <button class="category-panel" data-category="beauty">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600&auto=format&fit=crop" alt="Beauty & Wellbeing" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="category-label">Beauty & Wellbeing</div>
+                </div>
+            </button>
+            <button class="category-panel" data-category="gastro">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=600&auto=format&fit=crop" alt="Gastro" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="category-label">Gastro</div>
+                </div>
+            </button>
+            <button class="category-panel" data-category="ubytovani">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1501117716987-c8e2a4a3af5a?q=80&w=600&auto=format&fit=crop" alt="Ubytování" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="category-label">Ubytování</div>
+                </div>
+            </button>
+            <button class="category-panel" data-category="reality">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=600&auto=format&fit=crop" alt="Reality" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="category-label">Reality</div>
+                </div>
+            </button>
+            <button class="category-panel" data-category="remesla">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=600&auto=format&fit=crop" alt="Řemesla" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="category-label">Řemesla</div>
+                </div>
+            </button>
+        </section>
+
+        <!-- STICKY FILTER BAR -->
+        <section class="mt-6 sticky-filter">
+            <div id="filterBar" class="filter-bar rounded-sm">
+                <div class="flex items-center justify-between px-2 py-0 bg-[#E7EFEA] rounded-t-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-blue-900">Filtr</span>
+                        <span id="foundBadge" class="ml-2 inline-flex items-center rounded bg-[#E7EFEA] px-1.5 py-0 text-[11px] font-medium text-[#2F4B40] ring-1 ring-[#C8D6CF]">Nalezeno: 6</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1 p-1">
+                        <div class="flex items-center gap-1">
+                            <span class="hidden sm:inline text-[11px] text-blue-900/80">Radius:</span>
+                            <input type="number" id="radiusInput" min="1" value="10" class="w-16 rounded-sm border border-[#C8D6CF] h-7 px-2 text-[11px] focus:outline-none focus:ring-2 focus:ring-[#2F4B40]" placeholder="10"/>
+                            <span class="text-[11px] text-blue-900/80">km</span>
+                        </div>
+                        <input id="searchInput" value="" oninput="filterOffers()" class="rounded-sm border border-[#C8D6CF] h-7 px-2 text-[11px] focus:outline-none focus:ring-2 focus:ring-[#2F4B40]" placeholder="Hledat..."/>
+                        <input id="cityInput" value="" oninput="filterOffers()" class="rounded-sm border border-[#C8D6CF] h-7 px-2 text-[11px] focus:outline-none focus:ring-2 focus:ring-[#2F4B40]" placeholder="Město"/>
+                        <input id="addressInput" value="" oninput="filterOffers()" class="rounded-sm border border-[#C8D6CF] h-7 px-2 text-[11px] focus:outline-none focus:ring-2 focus:ring-[#2F4B40]" placeholder="Adresa"/>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[11px] text-blue-900/80 whitespace-nowrap">Všechny nabídky:</span>
+                            <select id="categorySelect" value="all" onchange="filterOffers()" class="rounded-sm border border-[#C8D6CF] h-7 px-2 text-[11px] focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">
+                                <option value="all">Všechny nabídky</option>
+                                <option value="beauty">Beauty & Wellbeing</option>
+                                <option value="gastro">Gastro</option>
+                                <option value="ubytovani">Ubytování</option>
+                                <option value="reality">Reality</option>
+                                <option value="remesla">Řemesla</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIP SECTION -->
+        <section class="mt-8">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold text-blue-900">VIP nabídky</h2>
+                <span id="vipCount" class="text-xs text-gray-500">2 v aktuálním filtru</span>
+            </div>
+            <div id="vipGrid" class="vip-grid gap-5">
+                <div class="vip-card">
+                    <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop" alt="Lash lifting + brow shape" class="h-56 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="p-4 space-y-2">
+                        <div class="discount-badge">–15% do neděle</div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-gray-900">Lash lifting + brow shape</h3>
+                            <span class="badge-vip">VIP</span>
+                        </div>
+                        <p class="text-sm text-gray-700 line-clamp-2 md:line-clamp-3">Luxusní balíček pro perfektní pohled a zvýraznění přirozeného vzhledu.</p>
+                        <div class="text-sm text-gray-600">Studio Ravé • Zábřeh</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm text-gray-400 line-through">990 Kč</span>
+                                <span class="text-base font-semibold text-blue-900">890 Kč</span>
+                            </div>
+                            <button class="rounded-md border border-[#C8D6CF] bg-white px-3 py-1.5 text-sm text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="vip-card">
+                    <img src="https://images.unsplash.com/photo-1523986371872-9d3ba2e2b1a9?q=80&w=1200&auto=format&fit=crop" alt="Degustační menu pro 2" class="h-56 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="p-4 space-y-2">
+                        <div class="discount-badge">Sklenka prosecca zdarma</div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-gray-900">Degustační menu pro 2</h3>
+                            <span class="badge-vip">VIP</span>
+                        </div>
+                        <p class="text-sm text-gray-700 line-clamp-2 md:line-clamp-3">Romantická večeře s autentickými italskými chutěmi.</p>
+                        <div class="text-sm text-gray-600">Trattoria Capri • Olomouc</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm text-gray-400 line-through">1 590 Kč</span>
+                                <span class="text-base font-semibold text-blue-900">1 290 Kč</span>
+                            </div>
+                            <button class="rounded-md border border-[#C8D6CF] bg-white px-3 py-1.5 text-sm text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STANDARD SECTION -->
+        <section class="mt-10">
+            <div class="flex items-center justify-between mb-3 gap-3">
+                <h2 class="text-lg font-semibold text-blue-900">Aktuální nabídky</h2>
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-gray-500 hidden sm:block">Seřadit:</label>
+                    <select id="sortSelect" value="relevance" onchange="filterOffers()" class="rounded-md border border-[#C8D6CF] px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">
+                        <option value="relevance">Doporučené</option>
+                        <option value="priceAsc">Nejnižší cena</option>
+                        <option value="discount">Nejvyšší sleva</option>
+                    </select>
+                    <span id="stdCount" class="text-xs text-gray-500">4 v aktuálním filtru</span>
+                </div>
+            </div>
+            <div id="stdGrid" class="std-grid gap-4">
+                <div class="std-card">
+                    <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1200&auto=format&fit=crop" alt="Masáž zad 45 min" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="p-3 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Masáž zad 45 min</h3>
+                            <span class="badge-top">TOP</span>
+                        </div>
+                        <p class="text-xs text-gray-700 line-clamp-1 md:line-clamp-2">Uvolněte napětí a dopřejte si odpočinek při příjemné masáži.</p>
+                        <div class="text-xs text-gray-600">Salon Bella • Olomouc</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm font-semibold text-blue-900">590 Kč</span>
+                            </div>
+                            <button class="rounded border border-[#C8D6CF] bg-white px-2 py-1 text-xs text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="std-card">
+                    <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1200&auto=format&fit=crop" alt="Obědové menu" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="p-3 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Obědové menu</h3>
+                            <span class="badge-new">NEW</span>
+                        </div>
+                        <p class="text-xs text-gray-700 line-clamp-1 md:line-clamp-2">Chutné a rychlé denní menu za skvělou cenu.</p>
+                        <div class="text-xs text-gray-600">Bistro 14 • Šumperk</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm font-semibold text-blue-900">149 Kč</span>
+                            </div>
+                            <button class="rounded border border-[#C8D6CF] bg-white px-2 py-1 text-xs text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="std-card">
+                    <img src="https://images.unsplash.com/photo-1501117716987-c8e2a4a3af5a?q=80&w=1200&auto=format&fit=crop" alt="Penzion U Lípy" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="p-3 space-y-2">
+                        <div class="discount-badge">Snídaně v ceně</div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Penzion U Lípy</h3>
+                        </div>
+                        <p class="text-xs text-gray-700 line-clamp-1 md:line-clamp-2">Rodinné ubytování v klidném prostředí se snídaní.</p>
+                        <div class="text-xs text-gray-600">U Lípy • Zábřeh</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xs text-gray-400 line-through">od 820 Kč/noc</span>
+                                <span class="text-sm font-semibold text-blue-900">od 750 Kč/noc</span>
+                            </div>
+                            <button class="rounded border border-[#C8D6CF] bg-white px-2 py-1 text-xs text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="std-card">
+                    <img src="https://images.unsplash.com/photo-1560185008-b033106af2ff?q=80&w=1200&auto=format&fit=crop" alt="Pronájem 2+kk – centrum" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <div class="p-3 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Pronájem 2+kk – centrum</h3>
+                            <span class="badge-vip">VIP</span>
+                        </div>
+                        <p class="text-xs text-gray-700 line-clamp-1 md:line-clamp-2">Moderní byt v centru s výbornou dostupností.</p>
+                        <div class="text-xs text-gray-600">Reality Paestum • Olomouc</div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm font-semibold text-blue-900">11 900 Kč</span>
+                            </div>
+                            <button class="rounded border border-[#C8D6CF] bg-white px-2 py-1 text-xs text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ACCOUNT VIEW (HIDDEN) -->
+    <div id="accountView" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-semibold text-blue-900">Můj účet</h2>
+                    <button onclick="closeAccountView()" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="text-center text-gray-600">
+                    <h3 class="text-lg font-semibold mb-4">Poskytovatelský dashboard</h3>
+                    <p>Zde bude kompletní správa nabídek, statistiky a další funkce.</p>
+                    <p class="text-sm mt-2">📊 Statistiky • 📋 Správa nabídek • 💬 Zprávy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const OFFERS = [
+            { id: 1, title: "Lash lifting + brow shape", provider: "Studio Ravé", city: "Zábřeh", price: "890 Kč", oldPrice: "990 Kč", newPrice: "890 Kč", discount: "–15%", promo: "–15% do neděle", vip: true, categoryKey: "beauty", clicks: 320, addedAt: "2025-10-09", description: "Luxusní balíček pro perfektní pohled a zvýraznění přirozeného vzhledu.", img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop" },
+            { id: 3, title: "Degustační menu pro 2", provider: "Trattoria Capri", city: "Olomouc", price: "1 290 Kč", oldPrice: "1 590 Kč", newPrice: "1 290 Kč", discount: "–300 Kč", promo: "Sklenka prosecca zdarma", vip: true, categoryKey: "gastro", clicks: 410, addedAt: "2025-10-10", description: "Romantická večeře s autentickými italskými chutěmi.", img: "https://images.unsplash.com/photo-1523986371872-9d3ba2e2b1a9?q=80&w=1200&auto=format&fit=crop" },
+            { id: 6, title: "Penzion U Lípy", provider: "U Lípy", city: "Zábřeh", price: "od 750 Kč/noc", oldPrice: "od 820 Kč/noc", newPrice: "od 750 Kč/noc", discount: "–70 Kč", promo: "Snídaně v ceně", vip: false, categoryKey: "ubytovani", clicks: 180, addedAt: "2025-10-06", description: "Rodinné ubytování v klidném prostředí se snídaní.", img: "https://images.unsplash.com/photo-1501117716987-c8e2a4a3af5a?q=80&w=1200&auto=format&fit=crop" },
+            { id: 2, title: "Masáž zad 45 min", provider: "Salon Bella", city: "Olomouc", price: "590 Kč", vip: false, categoryKey: "beauty", clicks: 520, addedAt: "2025-10-10", description: "Uvolněte napětí a dopřejte si odpočinek při příjemné masáži.", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1200&auto=format&fit=crop" },
+            { id: 4, title: "Obědové menu", provider: "Bistro 14", city: "Šumperk", price: "149 Kč", vip: false, categoryKey: "gastro", clicks: 460, addedAt: "2025-10-10", description: "Chutné a rychlé denní menu za skvělou cenu.", img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1200&auto=format&fit=crop" },
+            { id: 7, title: "Pronájem 2+kk – centrum", provider: "Reality Paestum", city: "Olomouc", price: "11 900 Kč", vip: true, categoryKey: "reality", clicks: 95, addedAt: "2025-10-01", description: "Moderní byt v centru s výbornou dostupností.", img: "https://images.unsplash.com/photo-1560185008-b033106af2ff?q=80&w=1200&auto=format&fit=crop" },
+        ];
+
+        let filteredOffers = [...OFFERS];
+        let currentCategory = 'all';
+
+        // Sticky filter
+        function updateStickyFilter() {
+            const filterBar = document.getElementById('filterBar');
+            if (window.scrollY > 56) {
+                filterBar.classList.add('stuck');
+            } else {
+                filterBar.classList.remove('stuck');
+            }
+        }
+
+        // Mobile menu
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        }
+
+        // Account view
+        function openAccountView() {
+            document.getElementById('accountView').classList.remove('hidden');
+        }
+
+        function closeAccountView() {
+            document.getElementById('accountView').classList.add('hidden');
+        }
+
+        // Category filtering
+        function setCategory(category) {
+            currentCategory = category;
+            
+            // Update active states
+            document.querySelectorAll('[data-category]').forEach(btn => {
+                btn.style.borderColor = btn.dataset.category === category ? '#3B82F6' : '#D2DED8';
+                btn.style.boxShadow = btn.dataset.category === category ? '0 0 0 2px rgba(59, 130, 246, 0.5)' : '';
+            });
+            
+            // Update dropdown
+            document.getElementById('categorySelect').value = category;
+            
+            filterOffers();
+        }
+
+        // Filter function
+        function filterOffers() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const city = document.getElementById('cityInput').value.toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            
+            filteredOffers = OFFERS.filter(offer => {
+                const matchesQuery = offer.title.toLowerCase().includes(query) || 
+                                   offer.provider.toLowerCase().includes(query);
+                const matchesCity = city === "" || offer.city.toLowerCase().includes(city);
+                const matchesCategory = category === "all" || offer.categoryKey === category;
+                
+                return matchesQuery && matchesCity && matchesCategory;
+            });
+            
+            renderOffers();
+        }
+
+        // Render offers
+        function renderOffers() {
+            const vipOffers = filteredOffers.filter(o => o.vip);
+            const stdOffers = filteredOffers.filter(o => !o.vip);
+            
+            // Update counts
+            document.getElementById('foundBadge').textContent = `Nalezeno: ${filteredOffers.length}`;
+            document.getElementById('vipCount').textContent = `${vipOffers.length} v aktuálním filtru`;
+            document.getElementById('stdCount').textContent = `${stdOffers.length} v aktuálním filtru`;
+            
+            // Update VIP grid (max 2)
+            const vipGrid = document.getElementById('vipGrid');
+            if (vipOffers.length === 0) {
+                vipGrid.innerHTML = '<div class="text-sm text-gray-500 col-span-full">Žádné VIP nabídky pro zadaný filtr.</div>';
+            } else {
+                vipGrid.innerHTML = vipOffers.slice(0, 2).map(offer => `
+                    <div class="vip-card">
+                        <img src="${offer.img}" alt="${offer.title}" class="h-56 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        <div class="p-4 space-y-2">
+                            ${offer.discount || offer.promo ? `<div class="discount-badge">${offer.discount || offer.promo}</div>` : ''}
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-base font-semibold text-gray-900">${offer.title}</h3>
+                                <span class="badge-vip">VIP</span>
+                            </div>
+                            <p class="text-sm text-gray-700 line-clamp-2 md:line-clamp-3">${offer.description}</p>
+                            <div class="text-sm text-gray-600">${offer.provider} • ${offer.city}</div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-baseline gap-2">
+                                    ${offer.oldPrice ? `<span class="text-sm text-gray-400 line-through">${offer.oldPrice}</span>` : ''}
+                                    <span class="text-base font-semibold text-blue-900">${offer.newPrice || offer.price}</span>
+                                </div>
+                                <button onclick="goToDetail(${offer.id})" class="rounded-md border border-[#C8D6CF] bg-white px-3 py-1.5 text-sm text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Update standard grid
+            const stdGrid = document.getElementById('stdGrid');
+            if (stdOffers.length === 0) {
+                stdGrid.innerHTML = `
+                    <div class="rounded-md border border-[#D2DED8] bg-white p-5 text-center text-sm text-gray-700 col-span-full">
+                        <h3 class="text-base font-semibold text-blue-900 mb-1">Nic jsme nenašli</h3>
+                        <p class="mb-3">Zkuste upravit filtr: ověřte pravopis, rozšiřte lokalitu, zvolte širší kategorii nebo upravte datum.</p>
+                        <ul class="mx-auto inline-block list-disc list-inside text-left text-gray-700 mb-4">
+                            <li>Odeberte příliš přísnou podmínku (konkrétní čas/město)</li>
+                            <li>Vyberte <em>Všechny nabídky</em> místo konkrétní kategorie</li>
+                            <li>Zkuste jiné klíčové slovo</li>
+                        </ul>
+                        <a href="#" class="inline-flex items-center rounded-sm border border-[#2F4B40] bg-[#2F4B40] px-3 py-1.5 text-white hover:opacity-90">Přidat nabídku</a>
+                    </div>
+                `;
+            } else {
+                stdGrid.innerHTML = stdOffers.map(offer => {
+                    const daysSince = Math.floor((Date.now() - new Date(offer.addedAt).getTime()) / (1000 * 60 * 60 * 24));
+                    const isNew = daysSince <= 2;
+                    const isTop = offer.clicks >= 100;
+                    
+                    return `
+                        <div class="std-card">
+                            <img src="${offer.img}" alt="${offer.title}" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                            <div class="p-3 space-y-2">
+                                ${offer.discount || offer.promo ? `<div class="discount-badge">${offer.discount || offer.promo}</div>` : ''}
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-gray-900">${offer.title}</h3>
+                                    ${isTop ? '<span class="badge-top">TOP</span>' : (isNew ? '<span class="badge-new">NEW</span>' : '')}
+                                </div>
+                                <p class="text-xs text-gray-700 line-clamp-1 md:line-clamp-2">${offer.description}</p>
+                                <div class="text-xs text-gray-600">${offer.provider} • ${offer.city}</div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-baseline gap-2">
+                                        ${offer.oldPrice ? `<span class="text-xs text-gray-400 line-through">${offer.oldPrice}</span>` : ''}
+                                        <span class="text-sm font-semibold text-blue-900">${offer.newPrice || offer.price}</span>
+                                    </div>
+                                    <button onclick="goToDetail(${offer.id})" class="rounded border border-[#C8D6CF] bg-white px-2 py-1 text-xs text-blue-900 focus:outline-none focus:ring-2 focus:ring-[#2F4B40]">Detail</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Navigation functions
+        function goToDetail(offerId) {
+            alert(`Detail nabídky ID: ${offerId}\n\nV reálné aplikaci by se otevřela stránka /offers/${offerId}`);
+        }
+
+        // Event listeners
+        document.getElementById('menuBtn').addEventListener('click', openMobileMenu);
+        document.getElementById('accountBtn').addEventListener('click', openAccountView);
+        
+        // Category panel clicks
+        document.querySelectorAll('[data-category]').forEach(btn => {
+            btn.addEventListener('click', () => setCategory(btn.dataset.category));
+        });
+        
+        // Initial render
+        renderOffers();
+        
+        // Scroll listener for sticky filter
+        window.addEventListener('scroll', updateStickyFilter);
+    </script>
+</body>
+</html>
