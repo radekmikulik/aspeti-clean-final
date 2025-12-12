@@ -10,6 +10,7 @@ import { AvailabilitySettings } from '@/components/Calendar/AvailabilitySettings
 import { BlackoutSettings } from '@/components/Calendar/BlackoutSettings'
 import { ChatComponent } from '@/components/Chat/ChatComponent'
 import { ProviderVerification } from '@/components/Account/ProviderVerification'
+import { CreditsBilling } from '@/components/Account/CreditsBilling'
 
 // Typy pro profil a stav
 interface ProviderProfile {
@@ -825,23 +826,9 @@ const ClientsTab: React.FC<any> = () => {
   )
 }
 
-// Credits Tab Component
+// Credits Tab Component - s denními odečty a Stripe integrací
 const CreditsTab: React.FC<any> = () => {
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Kredity & fakturace</h2>
-        <p className="text-gray-600">Správa kreditů a plateb</p>
-      </div>
-      
-      <div className="bg-gray-50 p-6 rounded-lg text-center">
-        <p className="text-gray-500">🚧 Modul "Kredity & fakturace" v implementaci</p>
-        <p className="text-sm text-gray-400 mt-2">
-          Denní odečet 5 Kč/24h, Stripe top-up, automatické skrývání nabídek
-        </p>
-      </div>
-    </div>
-  )
+  return <CreditsBilling />
 }
 
 // Messages Tab Component
