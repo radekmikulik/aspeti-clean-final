@@ -68,8 +68,8 @@ const VipCard: React.FC<{
             cursor: 'pointer',
             transition: 'background-color 0.2s'
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#15803d'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#16a34a'}
+          onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#15803d'}
+          onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#16a34a'}
         >
           Rezervovat
         </button>
@@ -131,8 +131,8 @@ const StdCard: React.FC<{
             cursor: 'pointer',
             transition: 'background-color 0.2s'
           }}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#15803d'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#16a34a'}
+          onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#15803d'}
+          onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#16a34a'}
         >
           Rezervovat
         </button>
@@ -231,7 +231,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   // Render funkce pro kredity s modalem
   const renderCredits = () => (
-    <div style={{ space: '24px' }}>
+    <div style={{ margin: '24px 0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Můj kredit</h3>
         <button 
