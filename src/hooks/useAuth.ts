@@ -1,8 +1,8 @@
 // React Hook pro správu auth stavu
 import { useState, useEffect } from 'react'
-import { AuthService } from './auth-service'
-import { User } from './auth'
-import { AuthState } from './auth'
+import { AuthService } from '@/lib/auth-service'
+import { User } from '@/lib/auth'
+import { AuthState } from '@/lib/auth'
 
 export function useAuth(): AuthState {
   const [user, setUser] = useState<User | null>(null)

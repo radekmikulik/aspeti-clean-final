@@ -1,6 +1,6 @@
 // Komponenta pro přihlášení/registraci
 import React, { useState } from 'react'
-import { AuthService } from '../lib/auth-service'
+import { AuthService } from '@/lib/auth-service'
 
 interface AuthModalProps {
   isOpen: boolean
