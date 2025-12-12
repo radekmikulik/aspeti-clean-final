@@ -9,6 +9,7 @@ import { CalendarAndMessagesService } from '@/lib/calendar-messages-service'
 import { AvailabilitySettings } from '@/components/Calendar/AvailabilitySettings'
 import { BlackoutSettings } from '@/components/Calendar/BlackoutSettings'
 import { ChatComponent } from '@/components/Chat/ChatComponent'
+import { ProviderVerification } from '@/components/Account/ProviderVerification'
 
 // Typy pro profil a stav
 interface ProviderProfile {
@@ -325,8 +326,15 @@ const DashboardTab: React.FC<any> = ({ profile }) => {
   )
 }
 
-// Profile Tab Component
+// Profile Tab Component - s ověřením
 const ProfileTab: React.FC<any> = ({ profile, setProfileCompleteness }) => {
+  const [verificationData, setVerificationData] = useState(null)
+
+  const handleVerificationUpdate = (verification: any) => {
+    setVerificationData(verification)
+    // Zde by byla aktualizace kompletnosti profilu
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -334,12 +342,121 @@ const ProfileTab: React.FC<any> = ({ profile, setProfileCompleteness }) => {
         <p className="text-gray-600">Dokončete svůj profil pro lepší nalezitelnost</p>
       </div>
       
-      {/* Formulář pro úpravu profilu - implementace podle specifikace */}
-      <div className="bg-gray-50 p-6 rounded-lg">
-        <p className="text-center text-gray-500">🚧 Formulář pro úpravu profilu v implementaci</p>
-        <p className="text-center text-sm text-gray-400 mt-2">
-          Zahrnuje: jméno, popis, lokace, kontakt, ověření (ARES), galerie
+      {/* Kompletnost profilu indikátor */}
+      <div className="bg-sage bg-opacity-10 border border-sage rounded-lg p-4">
+        <h3 className="font-semibold text-sage-dark mb-2">📊 Kompletnost profilu</h3>
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 bg-gray-200 rounded-full h-3">
+            <div 
+              className="bg-sage h-3 rounded-full transition-all duration-300"
+              style={{ width: '65%' }}
+            ></div>
+          </div>
+          <span className="text-sage-dark font-medium">65%</span>
+        </div>
+        <p className="text-sm text-sage-dark mt-2">
+          Pro publikování nabídek potřebujete min. 70% kompletnost + ověření
         </p>
+      </div>
+
+      {/* Sekce profilu */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Základní informace */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <h3 className="text-lg font-semibold mb-4">👤 Základní informace</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Název firmy</label>
+              <input 
+                type="text" 
+                defaultValue={profile?.name || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-sage focus:border-sage"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Popis</label>
+              <textarea 
+                rows={3}
+                defaultValue={profile?.description || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-sage focus:border-sage"
+                placeholder="Popište vaše služby a zkušenosti..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Lokace</label>
+              <input 
+                type="text" 
+                defaultValue={profile?.location || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-sage focus:border-sage"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Kontaktní informace */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <h3 className="text-lg font-semibold mb-4">📞 Kontakt</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+              <input 
+                type="email" 
+                defaultValue={profile?.email || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-sage focus:border-sage"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+              <input 
+                type="tel" 
+                defaultValue={profile?.phone || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-sage focus:border-sage"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Webové stránky</label>
+              <input 
+                type="url" 
+                defaultValue={profile?.website || ''}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-sage focus:border-sage"
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ověření účtu */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <h3 className="text-lg font-semibold mb-4">🔒 Ověření účtu</h3>
+        <ProviderVerification 
+          providerId={profile?.id || ''}
+          currentVerification={verificationData || undefined}
+          onVerificationUpdate={handleVerificationUpdate}
+        />
+      </div>
+
+      {/* Galerie */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <h3 className="text-lg font-semibold mb-4">🖼️ Galerie</h3>
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <div className="text-gray-400 mb-2">📷</div>
+          <p className="text-gray-600">Nahrajte obrázky vašich prací a služeb</p>
+          <p className="text-sm text-gray-500 mt-1">Podporované formáty: JPG, PNG (max. 5MB)</p>
+          <button className="mt-4 px-4 py-2 bg-sage text-sage-dark rounded-lg hover:bg-sage-dark hover:text-white transition-colors">
+            Nahrát obrázky
+          </button>
+        </div>
+      </div>
+
+      {/* Uložit změny */}
+      <div className="flex justify-end space-x-4">
+        <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          Zrušit
+        </button>
+        <button className="px-6 py-3 bg-sage text-sage-dark rounded-lg hover:bg-sage-dark hover:text-white transition-colors font-medium">
+          💾 Uložit změny
+        </button>
       </div>
     </div>
   )
