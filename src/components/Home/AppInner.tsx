@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { DatabaseService, Offer } from '@/lib/supabase'
 import { CalendarAndMessagesService } from '@/lib/calendar-messages-service'
 // import { useAuth } from '@/hooks/useAuth'
@@ -828,6 +829,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
 // Hlavní komponenta s autentizací
 export default function AppInner() {
+  const router = useRouter()
   const [accountOpen, setAccountOpen] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -920,7 +922,7 @@ export default function AppInner() {
                       👋 Ahoj, {user?.user_metadata?.full_name || user?.email}
                     </span>
                     <button 
-                      onClick={() => setAccountOpen(true)}
+                      onClick={() => router.push('/account/profile/edit')}
                       style={{
                         backgroundColor: '#2563eb',
                         color: 'white',

@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ASPETi PLUS - KROK 8: FINÁLNÍ INTEGRACE DESIGNU */
+/* Barevné palety podle specifikace: --sage a --navy */
+
+@layer base {
+  :root {
+    /* SAGE paleta podle specifikace */
+    --sage: #DDEBE3;
+    --sage-light: #E8F0F1;
+    --sage-dark: #C5D3D8;
+    --sage-strong: rgba(221, 235, 227, 0.9);
+    --sage-darkest: #B8C7CB;
+    
+    /* NAVY paleta podle specifikace */
+    --navy: #0F2A43;
+    --navy-light: #1A3A5A;
+    --navy-dark: #0A1E33;
+    
+    /* Doplňkové barvy */
+    --sage-gradient: linear-gradient(135deg, #DDEBE3 0%, #E8F0F1 50%, #C5D3D8 100%);
+  }
+}
+
 /* Custom styles for line-clamp utility */
 @layer utilities {
   .line-clamp-1 {
@@ -23,5 +45,200 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+  }
+  
+  /* Sage color utilities */
+  .bg-sage {
+    background-color: var(--sage);
+  }
+  
+  .bg-sage-light {
+    background-color: var(--sage-light);
+  }
+  
+  .bg-sage-dark {
+    background-color: var(--sage-dark);
+  }
+  
+  .bg-sage-darkest {
+    background-color: var(--sage-darkest);
+  }
+  
+  .text-sage {
+    color: var(--sage);
+  }
+  
+  .text-sage-dark {
+    color: var(--sage-dark);
+  }
+  
+  .text-sage-darkest {
+    color: var(--sage-darkest);
+  }
+  
+  .border-sage {
+    border-color: var(--sage);
+  }
+  
+  .border-sage-dark {
+    border-color: var(--sage-dark);
+  }
+  
+  /* Navy color utilities */
+  .bg-navy {
+    background-color: var(--navy);
+  }
+  
+  .bg-navy-light {
+    background-color: var(--navy-light);
+  }
+  
+  .bg-navy-dark {
+    background-color: var(--navy-dark);
+  }
+  
+  .text-navy {
+    color: var(--navy);
+  }
+  
+  .text-navy-light {
+    color: var(--navy-light);
+  }
+  
+  .text-navy-dark {
+    color: var(--navy-dark);
+  }
+  
+  /* Gradient utilities */
+  .bg-sage-gradient {
+    background: var(--sage-gradient);
+  }
+  
+  /* Card styling podle specifikace */
+  .card {
+    @apply rounded-xl shadow-sm border border-gray-200;
+  }
+  
+  .card-hover {
+    @apply card hover:shadow-md transition-shadow duration-200;
+  }
+  
+  /* Tab styling */
+  .tab-active {
+    @apply border-sage text-sage-dark bg-sage bg-opacity-10;
+  }
+  
+  .tab-inactive {
+    @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300;
+  }
+  
+  /* Button variants */
+  .btn-primary {
+    @apply bg-sage text-sage-dark hover:bg-sage-dark hover:text-white transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-navy text-white hover:bg-navy-light transition-colors duration-200;
+  }
+  
+  .btn-outline {
+    @apply border border-sage text-sage hover:bg-sage hover:text-sage-dark transition-colors duration-200;
+  }
+  
+  /* Status indicators */
+  .status-verified {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-inactive {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  /* Cover styling pro public profil */
+  .cover-overlay {
+    position: relative;
+    background: var(--sage-gradient);
+  }
+  
+  .cover-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .cover-stripe {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: var(--sage-strong);
+    backdrop-filter: blur(4px);
+  }
+  
+  /* Promo štítek styling - podle specifikace */
+  .promo-tag {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: #EF4444;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sidebar styling */
+  .sidebar {
+    position: sticky;
+    top: 2rem;
+  }
+  
+  /* Navigation styling */
+  .nav-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  
+  /* Loading animations */
+  .loading-spinner {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Gating indicator styling */
+  .gating-enabled {
+    @apply bg-green-50 border-green-200;
+  }
+  
+  .gating-disabled {
+    @apply bg-yellow-50 border-yellow-200;
+  }
+  
+  /* Responsive utilities */
+  @media (max-width: 768px) {
+    .cover-height {
+      height: 240px;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .cover-height {
+      height: 320px;
+    }
   }
 }
