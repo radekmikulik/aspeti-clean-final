@@ -14,141 +14,197 @@ import { AvailabilitySettings } from '@/components/Calendar/AvailabilitySettings
 import { BlackoutSettings } from '@/components/Calendar/BlackoutSettings'
 import { ChatComponent } from '@/components/Chat/ChatComponent'
 
-// VIP karta (2 vedle sebe)
+// VIP karta (2 vedle sebe) - klikací celá karta
 const VipCard: React.FC<{ 
   offer: Offer
   onReserve: (offer: Offer) => void
-}> = ({ offer, onReserve }) => (
-  <div style={{
-    background: 'linear-gradient(to right, #fef3c7, #fde68a)',
-    border: '2px solid #f59e0b',
-    borderRadius: '12px',
-    padding: '16px',
-    marginBottom: '16px',
-    overflow: 'hidden',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    transition: 'box-shadow 0.3s'
-  }}>
-    <div style={{
-      aspectRatio: '16/9',
-      background: 'linear-gradient(to right, #fde68a, #f59e0b)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: '16px'
-    }}>
-      <span style={{ color: '#92400e', fontWeight: 'bold', fontSize: '18px' }}>⭐ VIP nabídka</span>
-    </div>
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: 0 }}>{offer.title}</h3>
-          <span style={{ 
-            backgroundColor: '#eab308', 
-            color: 'white', 
-            padding: '2px 8px', 
-            borderRadius: '9999px', 
-            fontSize: '12px', 
-            fontWeight: 'bold' 
-          }}>VIP</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ color: '#fbbf24', marginRight: '4px' }}>★</span>
-          <span style={{ fontSize: '14px', color: '#6b7280' }}>{offer.provider?.rating || 0}</span>
-        </div>
-      </div>
-      <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{offer.description}</p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.location}</span>
-        <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#d97706' }}>{offer.price} Kč</span>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.provider?.name || 'Neznámý poskytovatel'}</span>
-        <button 
-          onClick={() => onReserve(offer)}
-          style={{
-            backgroundColor: '#16a34a',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#15803d'}
-          onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#16a34a'}
-        >
-          Rezervovat
-        </button>
-      </div>
-    </div>
-  </div>
-)
+}> = ({ offer, onReserve }) => {
+  const handleCardClick = () => {
+    // Přejdi na detail nabídky
+    window.location.href = `/offers/${offer.id}`
+  }
 
-// Standardní karta (3 vedle sebe)
+  const handleReserveClick = (e: React.MouseEvent) => {
+    e.stopPropagation() // Zabraň navigaci na detail při kliknutí na rezervovat
+    onReserve(offer)
+  }
+
+  return (
+    <div 
+      onClick={handleCardClick}
+      style={{
+        background: 'linear-gradient(to right, #fef3c7, #fde68a)',
+        border: '2px solid #f59e0b',
+        borderRadius: '12px',
+        padding: '16px',
+        marginBottom: '16px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        transition: 'all 0.3s',
+        cursor: 'pointer'
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.boxShadow = '0 10px 25px -3px rgba(0, 0, 0, 0.1)'
+        e.currentTarget.style.transform = 'translateY(-2px)'
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        e.currentTarget.style.transform = 'translateY(0)'
+      }}
+    >
+      <div style={{
+        aspectRatio: '16/9',
+        background: 'linear-gradient(to right, #fde68a, #f59e0b)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '16px'
+      }}>
+        <span style={{ color: '#92400e', fontWeight: 'bold', fontSize: '18px' }}>⭐ VIP nabídka</span>
+      </div>
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: 0 }}>{offer.title}</h3>
+            <span style={{ 
+              backgroundColor: '#eab308', 
+              color: 'white', 
+              padding: '2px 8px', 
+              borderRadius: '9999px', 
+              fontSize: '12px', 
+              fontWeight: 'bold' 
+            }}>VIP</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ color: '#fbbf24', marginRight: '4px' }}>★</span>
+            <span style={{ fontSize: '14px', color: '#6b7280' }}>{offer.provider?.rating || 0}</span>
+          </div>
+        </div>
+        <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{offer.description}</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.location}</span>
+          <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#d97706' }}>{offer.price} Kč</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.provider?.name || 'Neznámý poskytovatel'}</span>
+          <button 
+            onClick={handleReserveClick}
+            style={{
+              backgroundColor: '#16a34a',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#15803d'}
+            onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#16a34a'}
+          >
+            Rezervovat
+          </button>
+        </div>
+        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(180, 83, 9, 0.2)' }}>
+          <span style={{ fontSize: '12px', color: '#92400e', fontWeight: '500' }}>💡 Klikněte na kartu pro zobrazení detailu</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Standardní karta (3 vedle sebe) - klikací celá karta
 const StdCard: React.FC<{ 
   offer: Offer
   onReserve: (offer: Offer) => void
-}> = ({ offer, onReserve }) => (
-  <div style={{
-    backgroundColor: 'white',
-    border: '1px solid #e5e7eb',
-    borderRadius: '12px',
-    padding: '16px',
-    marginBottom: '16px',
-    overflow: 'hidden',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    transition: 'box-shadow 0.3s'
-  }}>
-    <div style={{
-      aspectRatio: '16/9',
-      backgroundColor: '#e5e7eb',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: '16px'
-    }}>
-      <span style={{ color: '#9ca3af' }}>Obrázek služby</span>
-    </div>
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: 0 }}>{offer.title}</h3>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ color: '#fbbf24', marginRight: '4px' }}>★</span>
-          <span style={{ fontSize: '14px', color: '#6b7280' }}>{offer.provider?.rating || 0}</span>
+}> = ({ offer, onReserve }) => {
+  const handleCardClick = () => {
+    // Přejdi na detail nabídky
+    window.location.href = `/offers/${offer.id}`
+  }
+
+  const handleReserveClick = (e: React.MouseEvent) => {
+    e.stopPropagation() // Zabraň navigaci na detail při kliknutí na rezervovat
+    onReserve(offer)
+  }
+
+  return (
+    <div 
+      onClick={handleCardClick}
+      style={{
+        backgroundColor: 'white',
+        border: '1px solid #e5e7eb',
+        borderRadius: '12px',
+        padding: '16px',
+        marginBottom: '16px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        transition: 'all 0.3s',
+        cursor: 'pointer'
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.boxShadow = '0 10px 25px -3px rgba(0, 0, 0, 0.1)'
+        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.borderColor = '#2563eb'
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+        e.currentTarget.style.transform = 'translateY(0)'
+        e.currentTarget.style.borderColor = '#e5e7eb'
+      }}
+    >
+      <div style={{
+        aspectRatio: '16/9',
+        backgroundColor: '#e5e7eb',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '16px'
+      }}>
+        <span style={{ color: '#9ca3af' }}>Obrázek služby</span>
+      </div>
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: 0 }}>{offer.title}</h3>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ color: '#fbbf24', marginRight: '4px' }}>★</span>
+            <span style={{ fontSize: '14px', color: '#6b7280' }}>{offer.provider?.rating || 0}</span>
+          </div>
+        </div>
+        <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{offer.description}</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.location}</span>
+          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2563eb' }}>{offer.price} Kč</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.provider?.name || 'Neznámý poskytovatel'}</span>
+          <button 
+            onClick={handleReserveClick}
+            style={{
+              backgroundColor: '#16a34a',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#15803d'}
+            onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#16a34a'}
+          >
+            Rezervovat
+          </button>
+        </div>
+        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
+          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>💡 Klikněte na kartu pro zobrazení detailu</span>
         </div>
       </div>
-      <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{offer.description}</p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.location}</span>
-        <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2563eb' }}>{offer.price} Kč</span>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.provider?.name || 'Neznámý poskytovatel'}</span>
-        <button 
-          onClick={() => onReserve(offer)}
-          style={{
-            backgroundColor: '#16a34a',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#15803d'}
-          onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#16a34a'}
-        >
-          Rezervovat
-        </button>
-      </div>
     </div>
-  </div>
-)
+  )
+}
 
 // AccountView komponenta s autentizací a role-based access
 const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -840,6 +896,7 @@ export default function AppInner() {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [availableCategories, setAvailableCategories] = useState<string[]>([])
   
   // Auth hook (temporarily disabled for build)
   // const { user, loading: authLoading, isAuthenticated, userRole } = useAuth()
@@ -857,8 +914,14 @@ export default function AppInner() {
         console.log('🚀 Loading offers from Supabase database...')
         const data = await DatabaseService.getOffers()
         setOffers(data)
+        
+        // Získej dostupné kategorie z nabídek
+        const categories = [...new Set(data.map(offer => offer.category).filter(Boolean))]
+        setAvailableCategories(categories)
+        
         setError(null)
         console.log(`✅ Loaded ${data.length} offers from Supabase`)
+        console.log(`✅ Available categories:`, categories)
       } catch (error) {
         console.error('❌ Error loading offers from Supabase:', error)
         setError('Chyba při načítání nabídek z databáze')
@@ -872,8 +935,8 @@ export default function AppInner() {
 
   // Funkce pro otevření rezervace (předaná do karet)
   const handleReserve = (offer: Offer) => {
-    setAccountOpen(true)
-    // Rezervační modal se otevře v AccountView
+    // Místo otevření účtu, přejdi na detail nabídky kde bude rezervace
+    window.location.href = `/offers/${offer.id}`
   }
 
   // Filtrování nabídek
@@ -975,10 +1038,134 @@ export default function AppInner() {
             <p style={{ color: '#6b7280' }}>Najděte si perfektní službu pro vás</p>
           </div>
 
-          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ color: '#6b7280' }}>
-              {loading ? 'Načítání z Supabase databáze...' : `Nalezeno ${sortedOffers.length} nabídek z databáze`}
-            </p>
+          {/* Vyhledávání a filtrování */}
+          <div style={{ 
+            backgroundColor: 'white', 
+            borderRadius: '12px', 
+            padding: '24px', 
+            marginBottom: '24px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+              {/* Vyhledávání */}
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                  🔍 Hledat službu
+                </label>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Název služby..."
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Kategorie */}
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                  📂 Kategorie
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="all">Všechny kategorie</option>
+                  {availableCategories.map(cat => (
+                    <option key={cat} value={cat}>
+                      {cat === 'beauty' ? 'Krása a wellness' :
+                       cat === 'sport' ? 'Sport a fitness' :
+                       cat === 'education' ? 'Vzdělávání' :
+                       cat === 'home' ? 'Domácí služby' :
+                       cat === 'food' ? 'Gastronomie' :
+                       cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Lokace */}
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                  📍 Lokace
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Město nebo region..."
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Řazení */}
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                  🔄 Řadit podle
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="relevance">Relevance</option>
+                  <option value="priceAsc">Cena: nízká → vysoká</option>
+                  <option value="priceDesc">Cena: vysoká → nízká</option>
+                  <option value="rating">Hodnocení</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Tlačítka akce */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ color: '#6b7280', fontSize: '14px' }}>
+                {loading ? 'Načítání z Supabase databáze...' : `Nalezeno ${sortedOffers.length} nabídek`}
+              </p>
+              <button
+                onClick={() => {
+                  setQuery('')
+                  setCategory('all')
+                  setLocation('')
+                  setSortBy('relevance')
+                }}
+                style={{
+                  backgroundColor: '#6b7280',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                🔄 Vymazat filtry
+              </button>
+            </div>
           </div>
 
           {error && (

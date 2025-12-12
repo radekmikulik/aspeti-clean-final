@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import AppInner from '@/components/Home/AppInner'
+import AppInner from '@/components/Home/AppInner_2024'
 
 const Home: NextPage = () => {
   return (
