@@ -1,9 +1,13 @@
-// Zjednodušená verze AppInner.tsx pro finální testování bez CSS problémů
-// KROK 5 FINALIZACE - Reálná Supabase databáze
+// ASPETi PLUS - Hlavní komponenta s autentizací
+// KROK 6: AUTENTIZACE UŽIVATELŮ - Supabase Auth
 
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { DatabaseService, Offer } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
+import { AuthService } from '@/lib/auth-service'
+import { AuthModal } from '@/components/Auth/AuthModal'
+import { ProtectedRoute } from '@/components/Auth/ProtectedRoute'
 
 // VIP karta (2 vedle sebe)
 const VipCard: React.FC<{ 
@@ -141,8 +145,9 @@ const StdCard: React.FC<{
   </div>
 )
 
-// AccountView komponenta s KROK 5 implementací
+// AccountView komponenta s autentizací a role-based access
 const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const { user, userRole } = useAuth()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [loading, setLoading] = useState(false)
   const [dashboardData, setDashboardData] = useState<any>(null)
@@ -161,18 +166,23 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   })
   const [processingReservation, setProcessingReservation] = useState(false)
   
-  // Mock provider ID pro testování
-  const providerId = '11111111-1111-1111-1111-111111111111'
+  // Uživatelské ID z autentizace
+  const userId = user?.id || '11111111-1111-1111-1111-111111111111'
 
-  // KROK 5: Funkce pro nabití kreditu
+  // Funkce pro nabití kreditu (pouze pro providers)
   const handleCreditTopUp = async () => {
+    if (userRole !== 'provider') {
+      alert('Tuto funkci mohou používat pouze poskytovatelé služeb.')
+      return
+    }
+    
     setProcessingPayment(true)
     try {
-      await DatabaseService.processCreditPayment(providerId, selectedAmount)
+      await DatabaseService.processCreditPayment(userId, selectedAmount)
       
       const [credits, currentBalance] = await Promise.all([
-        DatabaseService.getProviderCredits(providerId),
-        DatabaseService.getCurrentCreditBalance(providerId)
+        DatabaseService.getProviderCredits(userId),
+        DatabaseService.getCurrentCreditBalance(userId)
       ])
       
       setDashboardData((prev: any) => ({
@@ -182,7 +192,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       }))
       
       setShowCreditModal(false)
-      alert('✅ Kredit byl úspěšně nabit do Supabase databáze!')
+      alert('✅ Kredit byl úspěšně nabit!')
     } catch (error) {
       console.error('❌ Credit top-up failed:', error)
       alert('Chyba při nabití kreditu. Zkuste to později.')
@@ -191,7 +201,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
   }
 
-  // KROK 5: Funkce pro zpracování rezervace
+  // Funkce pro zpracování rezervace
   const handleReservation = async () => {
     if (!selectedOffer || !reservationForm.clientName || !reservationForm.clientPhone) {
       alert('Vyplňte prosím všechna povinná pole')
@@ -200,7 +210,8 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     setProcessingReservation(true)
     try {
-      const clientId = '22222222-2222-2222-2222-222222222222'
+      // Použij aktuálního uživatele jako client ID pokud je přihlášen
+      const clientId = user?.id || '22222222-2222-2222-2222-222222222222'
       await DatabaseService.createReservation(selectedOffer.id, clientId, reservationForm)
       
       setShowReservationModal(false)
@@ -214,7 +225,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         message: ''
       })
       
-      alert('✅ Rezervace byla úspěšně uložena do Supabase databáze!')
+      alert('✅ Rezervace byla úspěšně vytvořena!')
     } catch (error) {
       console.error('❌ Reservation failed:', error)
       alert('Chyba při vytváření rezervace. Zkuste to později.')
@@ -559,20 +570,90 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     </div>
   )
 
-  const tabs = [
-    { id: 'dashboard', name: 'Přehled', icon: '📊' },
-    { id: 'offers', name: 'Správa nabídek', icon: '📋' },
-    { id: 'credits', name: 'Můj kredit', icon: '💳' },
-    { id: 'messages', name: 'Zprávy', icon: '💬' }
-  ]
+  // Tab navigace podle role uživatele
+  const getTabs = () => {
+    const baseTabs = [
+      { id: 'dashboard', name: 'Přehled', icon: '📊' }
+    ]
+    
+    if (userRole === 'provider') {
+      return [
+        ...baseTabs,
+        { id: 'offers', name: 'Správa nabídek', icon: '📋' },
+        { id: 'credits', name: 'Můj kredit', icon: '💳' },
+        { id: 'messages', name: 'Zprávy', icon: '💬' }
+      ]
+    } else {
+      return [
+        ...baseTabs,
+        { id: 'reservations', name: 'Moje rezervace', icon: '📝' },
+        { id: 'messages', name: 'Zprávy', icon: '💬' }
+      ]
+    }
+  }
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <div>Dashboard obsah...</div>
-      case 'offers': return <div>Správa nabídek...</div>
-      case 'credits': return renderCredits()
-      case 'messages': return <div>Zprávy...</div>
-      default: return <div>Dashboard obsah...</div>
+      case 'dashboard':
+        return (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+              {userRole === 'provider' ? '🏢' : '👤'}
+            </div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>
+              {userRole === 'provider' ? 'Vítejte v Provider Dashboard' : 'Vítejte v Klientském účtu'}
+            </h3>
+            <p style={{ color: '#6b7280' }}>
+              {userRole === 'provider' 
+                ? 'Zde můžete spravovat své nabídky, kredit a komunikovat s klienty.'
+                : 'Zde můžete sledovat své rezervace a komunikovat s poskytovateli.'
+              }
+            </p>
+          </div>
+        )
+      case 'offers':
+        return userRole === 'provider' ? (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>Správa nabídek</h3>
+            <p style={{ color: '#6b7280' }}>Zde můžete přidávat, upravovat a spravovat své nabídky služeb.</p>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '32px', color: '#dc2626' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+            <p>Nedostatečná oprávnění</p>
+          </div>
+        )
+      case 'credits':
+        return userRole === 'provider' ? renderCredits() : (
+          <div style={{ textAlign: 'center', padding: '32px', color: '#dc2626' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+            <p>Tuto sekci mohou používat pouze poskytovatelé</p>
+          </div>
+        )
+      case 'reservations':
+        return userRole === 'client' ? (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📝</div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>Moje rezervace</h3>
+            <p style={{ color: '#6b7280' }}>Zde můžete sledovat stav svých rezervací a komunikovat s poskytovateli.</p>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '32px', color: '#dc2626' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+            <p>Tuto sekci mohou používat pouze klienti</p>
+          </div>
+        )
+      case 'messages':
+        return (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>💬</div>
+            <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>Zprávy</h3>
+            <p style={{ color: '#6b7280' }}>Zde můžete komunikovat s ostatními uživateli.</p>
+          </div>
+        )
+      default:
+        return <div>Dashboard obsah...</div>
     }
   }
 
@@ -599,7 +680,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {/* Tab navigace */}
       <div style={{ borderBottom: '1px solid #e5e7eb' }}>
         <nav style={{ display: 'flex' }}>
-          {tabs.map(tab => (
+          {getTabs().map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -630,9 +711,10 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   )
 }
 
-// Hlavní komponenta
+// Hlavní komponenta s autentizací
 export default function AppInner() {
   const [accountOpen, setAccountOpen] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [query, setQuery] = useState("")
   const [category, setCategory] = useState("all")
@@ -641,6 +723,9 @@ export default function AppInner() {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Auth hook
+  const { user, loading: authLoading, isAuthenticated, userRole } = useAuth()
 
   // Načtení nabídek z reálné Supabase databáze
   useEffect(() => {
@@ -703,19 +788,60 @@ export default function AppInner() {
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#2563eb', margin: 0 }}>ASPETi PLUS</h1>
               </div>
-              <button 
-                onClick={() => setAccountOpen(true)}
-                style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                Můj účet
-              </button>
+              
+              {/* Auth sekce */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {authLoading ? (
+                  <span style={{ color: '#6b7280', fontSize: '14px' }}>Načítání...</span>
+                ) : isAuthenticated ? (
+                  <>
+                    <span style={{ color: '#374151', fontSize: '14px' }}>
+                      👋 Ahoj, {user?.user_metadata?.full_name || user?.email}
+                    </span>
+                    <button 
+                      onClick={() => setAccountOpen(true)}
+                      style={{
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Můj účet
+                    </button>
+                    <button 
+                      onClick={() => AuthService.signOut()}
+                      style={{
+                        backgroundColor: '#6b7280',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                    >
+                      Odhlásit
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    onClick={() => setShowAuthModal(true)}
+                    style={{
+                      backgroundColor: '#16a34a',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Přihlásit se / Registrovat
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </header>
@@ -809,11 +935,22 @@ export default function AppInner() {
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <AccountView onClose={() => setAccountOpen(false)} />
+              <ProtectedRoute>
+                <AccountView onClose={() => setAccountOpen(false)} />
+              </ProtectedRoute>
             </div>
           )}
         </main>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={() => {
+          console.log('✅ User authenticated successfully')
+        }}
+      />
     </>
   )
 }
