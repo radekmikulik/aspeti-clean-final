@@ -1,5 +1,4 @@
-// ASPETi PLUS - ČISTÁ VERZE - ŽÁDNÉ CHYBY
-
+// ČISTÁ VERZE - KONEČNÉ ŘEŠENÍ
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { DatabaseService, Offer } from '@/lib/supabase'
@@ -89,7 +88,7 @@ const StdCard: React.FC<{ offer: Offer; onReserve: (offer: Offer) => void }> = (
 }
 
 // Hlavní komponenta
-export default function AppInner() {
+export default function CleanApp() {
   const router = useRouter()
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
@@ -221,4 +220,3 @@ export default function AppInner() {
     </div>
   )
 }
-// Refresh cache - 2024-12-13

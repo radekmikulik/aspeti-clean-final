@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASPETi PLUS - Katalog nabídek</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background-color: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 0;
+        }
+        
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .nav a {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #2563eb;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #2563eb;
+            cursor: pointer;
+        }
+        
+        .btn-success {
+            background-color: #16a34a;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+        
+        .page-title {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .search-filter {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .search-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+        }
+        
+        .search-input, .search-select {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-vip {
+            background: linear-gradient(to right, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+        }
+        
+        .card-image {
+            aspect-ratio: 16/9;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+        
+        .card-image-vip {
+            background: linear-gradient(to right, #fde68a, #f59e0b);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #111827;
+        }
+        
+        .card-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .card-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d97706;
+        }
+        
+        .card-price-standard {
+            color: #2563eb;
+            font-size: 18px;
+        }
+        
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+        
+        .card-provider {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 48px;
+            color: #6b7280;
+        }
+        
+        .results-count {
+            margin-bottom: 20px;
+            color: #6b7280;
+        }
+        
+        .vip-badge {
+            background: linear-gradient(to right, #fde68a, #f59e0b);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #92400e;
+            margin-left: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav {
+                display: none;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">ASPETi PLUS</h1>
+            
+            <nav class="nav">
+                <a href="#" onclick="showAll()">Nabídky</a>
+                <a href="#" onclick="showProviders()">Poskytovatelé</a>
+                <a href="#" onclick="showAbout()">O projektu</a>
+            </nav>
+            
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="showLogin()">Přihlásit</button>
+                <button class="btn-primary" onclick="showRegister()">Registrovat</button>
+                <button class="btn-success" onclick="showAccount()">Můj účet</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <h2 class="page-title">Katalog nabídek</h2>
+
+        <!-- SEARCH & FILTER -->
+        <div class="search-filter">
+            <div class="search-grid">
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="Hledat službu..."
+                    oninput="filterOffers()"
+                />
+                <select
+                    id="categorySelect"
+                    class="search-select"
+                    onchange="filterOffers()"
+                >
+                    <option value="all">Všechny kategorie</option>
+                    <option value="beauty">Krása a wellness</option>
+                    <option value="sport">Sport a fitness</option>
+                    <option value="education">Vzdělávání</option>
+                    <option value="home">Domácí služby</option>
+                    <option value="food">Gastronomie</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="resultsInfo" class="results-count"></div>
+        
+        <div id="loading" class="loading">Načítání nabídek...</div>
+        <div id="cardsContainer" class="cards-grid" style="display: none;"></div>
+    </main>
+
+    <script>
+        // Mock data pro testování
+        const mockOffers = [
+            {
+                id: '1',
+                title: 'Masáž pro zdraví a relaxaci',
+                description: 'Profesionální masáž pro uvolnění napětí a zlepšení zdraví',
+                price: 500,
+                location: 'Praha 1',
+                category: 'beauty',
+                vip: true,
+                provider: { name: 'Wellness Studio Praha' }
+            },
+            {
+                id: '2',
+                title: 'Osobní trénink',
+                description: 'Individuální tréninky s osobním trenérem',
+                price: 800,
+                location: 'Praha 2',
+                category: 'sport',
+                vip: false,
+                provider: { name: 'Fitness Club' }
+            },
+            {
+                id: '3',
+                title: 'Kurz angličtiny',
+                description: 'Intenzivní kurz angličtiny pro začátečníky',
+                price: 1200,
+                location: 'Praha 3',
+                category: 'education',
+                vip: false,
+                provider: { name: 'Jazyková škola ABC' }
+            },
+            {
+                id: '4',
+                title: 'Úklid domácnosti',
+                description: 'Profesionální úklid celé domácnosti',
+                price: 300,
+                location: 'Praha 4',
+                category: 'home',
+                vip: true,
+                provider: { name: 'Úklidové služby Plus' }
+            },
+            {
+                id: '5',
+                title: 'Degustační večeře',
+                description: 'Romantická večeře pro dva s degustačním menu',
+                price: 1500,
+                location: 'Praha 5',
+                category: 'food',
+                vip: false,
+                provider: { name: 'Restaurace U Zlatého růže' }
+            },
+            {
+                id: '6',
+                title: 'Manikúra a pedikúra',
+                description: 'Kompletní péče o nehty a pokožku',
+                price: 400,
+                location: 'Praha 6',
+                category: 'beauty',
+                vip: false,
+                provider: { name: 'Beauty Salon' }
+            }
+        ];
+
+        let filteredOffers = [];
+        let offers = [];
+
+        // Načtení nabídek
+        async function loadOffers() {
+            try {
+                // Simulace načítání dat
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                offers = mockOffers;
+                filteredOffers = [...offers];
+                renderOffers();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('cardsContainer').style.display = 'grid';
+            } catch (error) {
+                console.error('Error loading offers:', error);
+                document.getElementById('loading').innerHTML = 'Chyba při načítání nabídek';
+            }
+        }
+
+        // Filtrování nabídek
+        function filterOffers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+
+            filteredOffers = offers.filter(offer => {
+                const matchesSearch = offer.title.toLowerCase().includes(searchTerm) ||
+                                    offer.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'all' || offer.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderOffers();
+        }
+
+        // Vykreslení nabídek
+        function renderOffers() {
+            const container = document.getElementById('cardsContainer');
+            const resultsInfo = document.getElementById('resultsInfo');
+            
+            resultsInfo.innerHTML = `Nalezeno ${filteredOffers.length} nabídek`;
+            
+            container.innerHTML = filteredOffers.map(offer => `
+                <div class="card ${offer.vip ? 'card-vip' : ''}" onclick="goToDetail('${offer.id}')">
+                    <div class="card-image ${offer.vip ? 'card-image-vip' : ''}">
+                        ${offer.vip ? 
+                            '<div class="vip-badge">⭐ VIP nabídka</div>' : 
+                            '<span style="color: #9ca3af;">Obrázek služby</span>'
+                        }
+                    </div>
+                    <div>
+                        <h3 class="card-title">${offer.title}${offer.vip ? '<span class="vip-badge">VIP</span>' : ''}</h3>
+                        <p class="card-description">${offer.description}</p>
+                        <div class="card-footer">
+                            <span class="card-provider">${offer.location} • ${offer.provider.name}</span>
+                            <span class="card-price ${!offer.vip ? 'card-price-standard' : ''}">${offer.price} Kč</span>
+                        </div>
+                        <div class="card-footer" style="margin-top: 12px;">
+                            <button onclick="event.stopPropagation(); reserveOffer('${offer.id}')" class="btn-success">
+                                Rezervovat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Navigační funkce
+        function goToDetail(offerId) {
+            // V reálné aplikaci by to bylo: window.location.href = `/offers/${offerId}`
+            alert(`Přechod na detail nabídky ID: ${offerId}\n\nV reálné aplikaci by se otevřela stránka: /offers/${offerId}`);
+        }
+
+        function reserveOffer(offerId) {
+            // V reálné aplikaci by to otevřelo rezervační modal
+            alert(`Rezervace nabídky ID: ${offerId}\n\nV reálné aplikaci by se otevřel rezervační formulář.`);
+        }
+
+        function showAll() {
+            alert('Zobrazuji všechny nabídky...');
+        }
+
+        function showProviders() {
+            alert('Přechod na seznam poskytovatelů...');
+        }
+
+        function showAbout() {
+            alert('O projektu ASPETi PLUS...');
+        }
+
+        function showLogin() {
+            alert('Přihlašovací formulář...');
+        }
+
+        function showRegister() {
+            alert('Registrační formulář...');
+        }
+
+        function showAccount() {
+            alert('Účet uživatele...');
+        }
+
+        // Inicializace při načtení stránky
+        document.addEventListener('DOMContentLoaded', loadOffers);
+    </script>
+</body>
+</html>
