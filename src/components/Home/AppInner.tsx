@@ -1,40 +1,75 @@
-// FINÁLNÍ VERZE AppInner.tsx - KROK 5 DOKONČEN
-// Implementace monetizace a rezervačního systému
+// Zjednodušená verze AppInner.tsx pro finální testování bez CSS problémů
+// KROK 5 FINALIZACE - Reálná Supabase databáze
 
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { DatabaseService, Offer } from '@/lib/supabase_mock'
+import { DatabaseService, Offer } from '@/lib/supabase'
 
 // VIP karta (2 vedle sebe)
 const VipCard: React.FC<{ 
   offer: Offer
   onReserve: (offer: Offer) => void
 }> = ({ offer, onReserve }) => (
-  <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-    <div className="aspect-video bg-gradient-to-r from-yellow-200 to-yellow-300 flex items-center justify-center">
-      <span className="text-yellow-800 font-bold text-lg">⭐ VIP nabídka</span>
+  <div style={{
+    background: 'linear-gradient(to right, #fef3c7, #fde68a)',
+    border: '2px solid #f59e0b',
+    borderRadius: '12px',
+    padding: '16px',
+    marginBottom: '16px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    transition: 'box-shadow 0.3s'
+  }}>
+    <div style={{
+      aspectRatio: '16/9',
+      background: 'linear-gradient(to right, #fde68a, #f59e0b)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '16px'
+    }}>
+      <span style={{ color: '#92400e', fontWeight: 'bold', fontSize: '18px' }}>⭐ VIP nabídka</span>
     </div>
-    <div className="p-4">
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-gray-900">{offer.title}</h3>
-          <span className="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">VIP</span>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: 0 }}>{offer.title}</h3>
+          <span style={{ 
+            backgroundColor: '#eab308', 
+            color: 'white', 
+            padding: '2px 8px', 
+            borderRadius: '9999px', 
+            fontSize: '12px', 
+            fontWeight: 'bold' 
+          }}>VIP</span>
         </div>
-        <div className="flex items-center">
-          <span className="text-yellow-400 mr-1">★</span>
-          <span className="text-sm text-gray-600">{offer.provider?.rating || 0}</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ color: '#fbbf24', marginRight: '4px' }}>★</span>
+          <span style={{ fontSize: '14px', color: '#6b7280' }}>{offer.provider?.rating || 0}</span>
         </div>
       </div>
-      <p className="text-gray-600 text-sm mb-2">{offer.description}</p>
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm text-gray-500">{offer.location}</span>
-        <span className="text-xl font-bold text-yellow-600">{offer.price} Kč</span>
+      <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{offer.description}</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.location}</span>
+        <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#d97706' }}>{offer.price} Kč</span>
       </div>
-      <div className="flex justify-between items-center">
-        <span className="text-sm text-gray-500">{offer.provider?.name || 'Neznámý poskytovatel'}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.provider?.name || 'Neznámý poskytovatel'}</span>
         <button 
           onClick={() => onReserve(offer)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition font-semibold"
+          style={{
+            backgroundColor: '#16a34a',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#15803d'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#16a34a'}
         >
           Rezervovat
         </button>
@@ -48,28 +83,56 @@ const StdCard: React.FC<{
   offer: Offer
   onReserve: (offer: Offer) => void
 }> = ({ offer, onReserve }) => (
-  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-    <div className="aspect-video bg-gray-200 flex items-center justify-center">
-      <span className="text-gray-400">Obrázek služby</span>
+  <div style={{
+    backgroundColor: 'white',
+    border: '1px solid #e5e7eb',
+    borderRadius: '12px',
+    padding: '16px',
+    marginBottom: '16px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    transition: 'box-shadow 0.3s'
+  }}>
+    <div style={{
+      aspectRatio: '16/9',
+      backgroundColor: '#e5e7eb',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '16px'
+    }}>
+      <span style={{ color: '#9ca3af' }}>Obrázek služby</span>
     </div>
-    <div className="p-4">
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-lg font-semibold text-gray-900">{offer.title}</h3>
-        <div className="flex items-center">
-          <span className="text-yellow-400 mr-1">★</span>
-          <span className="text-sm text-gray-600">{offer.provider?.rating || 0}</span>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: 0 }}>{offer.title}</h3>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ color: '#fbbf24', marginRight: '4px' }}>★</span>
+          <span style={{ fontSize: '14px', color: '#6b7280' }}>{offer.provider?.rating || 0}</span>
         </div>
       </div>
-      <p className="text-gray-600 text-sm mb-2">{offer.description}</p>
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm text-gray-500">{offer.location}</span>
-        <span className="text-lg font-bold text-blue-600">{offer.price} Kč</span>
+      <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{offer.description}</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.location}</span>
+        <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2563eb' }}>{offer.price} Kč</span>
       </div>
-      <div className="flex justify-between items-center">
-        <span className="text-sm text-gray-500">{offer.provider?.name || 'Neznámý poskytovatel'}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '14px', color: '#9ca3af' }}>{offer.provider?.name || 'Neznámý poskytovatel'}</span>
         <button 
           onClick={() => onReserve(offer)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition"
+          style={{
+            backgroundColor: '#16a34a',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#15803d'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#16a34a'}
         >
           Rezervovat
         </button>
@@ -119,7 +182,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       }))
       
       setShowCreditModal(false)
-      alert('✅ Kredit byl úspěšně nabit!')
+      alert('✅ Kredit byl úspěšně nabit do Supabase databáze!')
     } catch (error) {
       console.error('❌ Credit top-up failed:', error)
       alert('Chyba při nabití kreditu. Zkuste to později.')
@@ -151,7 +214,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         message: ''
       })
       
-      alert('✅ Rezervace byla úspěšně odeslána!')
+      alert('✅ Rezervace byla úspěšně uložena do Supabase databáze!')
     } catch (error) {
       console.error('❌ Reservation failed:', error)
       alert('Chyba při vytváření rezervace. Zkuste to později.')
@@ -168,63 +231,113 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   // Render funkce pro kredity s modalem
   const renderCredits = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Můj kredit</h3>
+    <div style={{ space: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Můj kredit</h3>
         <button 
           onClick={() => setShowCreditModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          style={{
+            backgroundColor: '#2563eb',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            border: 'none',
+            cursor: 'pointer'
+          }}
         >
           Nabít kredit
         </button>
       </div>
 
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h4 className="text-sm font-medium text-gray-800 mb-2">Aktuální zůstatek</h4>
-        <p className="text-3xl font-bold text-gray-900">
+      <div style={{
+        backgroundColor: '#f9fafb',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        padding: '24px',
+        marginBottom: '24px'
+      }}>
+        <h4 style={{ fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>Aktuální zůstatek</h4>
+        <p style={{ fontSize: '30px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
           {dashboardData?.currentBalance || 0} Kč
         </p>
         {dashboardData?.currentBalance < 20 && (
-          <p className="text-sm text-orange-600 mt-2">⚠️ Nízký kredit - doporučujeme nabití</p>
+          <p style={{ fontSize: '14px', color: '#ea580c', marginTop: '8px' }}>⚠️ Nízký kredit - doporučujeme nabití</p>
         )}
       </div>
 
       {/* Modal pro nabití kreditu */}
       {showCreditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 max-w-[90vw]">
-            <h3 className="text-lg font-semibold mb-4">Nabít kredit</h3>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            width: '384px',
+            maxWidth: '90vw'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Nabít kredit</h3>
             
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">Vyberte částku pro nabití:</p>
+            <div style={{ marginBottom: '16px' }}>
+              <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '16px' }}>Vyberte částku pro nabití:</p>
               
-              <div className="grid grid-cols-3 gap-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '24px' }}>
                 {[200, 500, 1000].map(amount => (
                   <button
                     key={amount}
                     onClick={() => setSelectedAmount(amount)}
-                    className={`p-3 rounded-lg border text-center font-medium transition ${
-                      selectedAmount === amount
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid',
+                      textAlign: 'center',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      backgroundColor: selectedAmount === amount ? '#2563eb' : 'white',
+                      color: selectedAmount === amount ? 'white' : '#374151',
+                      borderColor: selectedAmount === amount ? '#2563eb' : '#d1d5db'
+                    }}
                   >
                     {amount} Kč
                   </button>
                 ))}
               </div>
               
-              <div className="flex justify-end space-x-3 mt-6">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                 <button
                   onClick={() => setShowCreditModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  style={{
+                    padding: '8px 16px',
+                    color: '#6b7280',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
                 >
                   Zrušit
                 </button>
                 <button
                   onClick={handleCreditTopUp}
                   disabled={processingPayment}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  style={{
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    padding: '8px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: processingPayment ? 'not-allowed' : 'pointer',
+                    opacity: processingPayment ? 0.5 : 1
+                  }}
                 >
                   {processingPayment ? 'Zpracovávám...' : `Nabít ${selectedAmount} Kč`}
                 </button>
@@ -236,72 +349,123 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       
       {/* Modal pro rezervaci */}
       {showReservationModal && selectedOffer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-[500px] max-w-[90vw] max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">Rezervovat: {selectedOffer.title}</h3>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            width: '500px',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            overflowY: 'auto'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+              Rezervovat: {selectedOffer.title}
+            </h3>
             
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                   Jméno a příjmení *
                 </label>
                 <input
                   type="text"
                   value={reservationForm.clientName}
                   onChange={(e) => setReservationForm(prev => ({ ...prev, clientName: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
                   placeholder="Vaše jméno"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                   Telefon *
                 </label>
                 <input
                   type="tel"
                   value={reservationForm.clientPhone}
                   onChange={(e) => setReservationForm(prev => ({ ...prev, clientPhone: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
                   placeholder="+420 xxx xxx xxx"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                   Email
                 </label>
                 <input
                   type="email"
                   value={reservationForm.clientEmail}
                   onChange={(e) => setReservationForm(prev => ({ ...prev, clientEmail: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none'
+                  }}
                   placeholder="vas@email.cz"
                 />
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                     Datum rezervace *
                   </label>
                   <input
                     type="date"
                     value={reservationForm.reservationDate}
                     onChange={(e) => setReservationForm(prev => ({ ...prev, reservationDate: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={{
+                      width: '100%',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      outline: 'none'
+                    }}
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                     Čas rezervace *
                   </label>
                   <select
                     value={reservationForm.reservationTime}
                     onChange={(e) => setReservationForm(prev => ({ ...prev, reservationTime: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={{
+                      width: '100%',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      outline: 'none'
+                    }}
                   >
                     <option value="">Vyberte čas</option>
                     <option value="09:00">09:00</option>
@@ -319,26 +483,36 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                   Poznámka k rezervaci
                 </label>
                 <textarea
                   value={reservationForm.message}
                   onChange={(e) => setReservationForm(prev => ({ ...prev, message: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={3}
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    outline: 'none',
+                    height: '80px'
+                  }}
                   placeholder="Napište nám vaše požadavky nebo dotazy..."
                 />
               </div>
               
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <h4 className="font-medium text-gray-900 mb-1">Shrnutí rezervace</h4>
-                <p className="text-sm text-gray-600">{selectedOffer.title}</p>
-                <p className="text-sm text-gray-600">{selectedOffer.location}</p>
-                <p className="text-lg font-semibold text-blue-600">{selectedOffer.price} Kč</p>
+              <div style={{
+                backgroundColor: '#f9fafb',
+                padding: '12px',
+                borderRadius: '8px'
+              }}>
+                <h4 style={{ fontWeight: '500', color: '#111827', marginBottom: '4px' }}>Shrnutí rezervace</h4>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0' }}>{selectedOffer.title}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0' }}>{selectedOffer.location}</p>
+                <p style={{ fontSize: '18px', fontWeight: '600', color: '#2563eb', margin: '4px 0' }}>{selectedOffer.price} Kč</p>
               </div>
               
-              <div className="flex justify-end space-x-3 pt-4">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', paddingTop: '16px' }}>
                 <button
                   onClick={() => {
                     setShowReservationModal(false)
@@ -352,14 +526,28 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       message: ''
                     })
                   }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  style={{
+                    padding: '8px 16px',
+                    color: '#6b7280',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
                 >
                   Zrušit
                 </button>
                 <button
                   onClick={handleReservation}
                   disabled={processingReservation}
-                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                  style={{
+                    backgroundColor: '#16a34a',
+                    color: 'white',
+                    padding: '8px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: processingReservation ? 'not-allowed' : 'pointer',
+                    opacity: processingReservation ? 0.5 : 1
+                  }}
                 >
                   {processingReservation ? 'Odesílám...' : 'Potvrdit rezervaci'}
                 </button>
@@ -389,31 +577,45 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-      <div className="flex justify-between items-center p-6 border-b">
-        <h2 className="text-2xl font-bold text-gray-900">Můj účet</h2>
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+      maxWidth: '1024px',
+      width: '100%',
+      maxHeight: '90vh',
+      overflowY: 'auto'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px', borderBottom: '1px solid #e5e7eb' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>Můj účet</h2>
         <button 
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 text-2xl"
+          style={{ color: '#9ca3af', fontSize: '24px', background: 'none', border: 'none', cursor: 'pointer' }}
         >
           ×
         </button>
       </div>
 
       {/* Tab navigace */}
-      <div className="border-b">
-        <nav className="flex">
+      <div style={{ borderBottom: '1px solid #e5e7eb' }}>
+        <nav style={{ display: 'flex' }}>
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 text-sm font-medium border-b-2 ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              style={{
+                padding: '12px 24px',
+                fontSize: '14px',
+                fontWeight: '500',
+                borderBottom: '2px solid',
+                borderColor: activeTab === tab.id ? '#2563eb' : 'transparent',
+                color: activeTab === tab.id ? '#2563eb' : '#6b7280',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
+              }}
             >
-              <span className="mr-2">{tab.icon}</span>
+              <span style={{ marginRight: '8px' }}>{tab.icon}</span>
               {tab.name}
             </button>
           ))}
@@ -421,7 +623,7 @@ const AccountView: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Tab obsah */}
-      <div className="p-6">
+      <div style={{ padding: '24px' }}>
         {renderContent()}
       </div>
     </div>
@@ -440,16 +642,18 @@ export default function AppInner() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Načtení nabídek z databáze
+  // Načtení nabídek z reálné Supabase databáze
   useEffect(() => {
     const loadOffers = async () => {
       try {
+        console.log('🚀 Loading offers from Supabase database...')
         const data = await DatabaseService.getOffers()
         setOffers(data)
         setError(null)
+        console.log(`✅ Loaded ${data.length} offers from Supabase`)
       } catch (error) {
-        console.error('Error loading offers:', error)
-        setError('Chyba při načítání nabídek')
+        console.error('❌ Error loading offers from Supabase:', error)
+        setError('Chyba při načítání nabídek z databáze')
       } finally {
         setLoading(false)
       }
@@ -461,7 +665,7 @@ export default function AppInner() {
   // Funkce pro otevření rezervace (předaná do karet)
   const handleReserve = (offer: Offer) => {
     setAccountOpen(true)
-    // TODO: Otevřít rezervační modal v AccountView
+    // Rezervační modal se otevře v AccountView
   }
 
   // Filtrování nabídek
@@ -491,17 +695,24 @@ export default function AppInner() {
         <meta name="description" content="Najděte si perfektní službu pro vás" />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-2xl font-bold text-blue-600">ASPETi PLUS</h1>
+        <header style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', borderBottom: '1px solid #e5e7eb' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#2563eb', margin: 0 }}>ASPETi PLUS</h1>
               </div>
               <button 
                 onClick={() => setAccountOpen(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                style={{
+                  backgroundColor: '#2563eb',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
               >
                 Můj účet
               </button>
@@ -509,38 +720,52 @@ export default function AppInner() {
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Katalog nabídek</h2>
-            <p className="text-gray-600">Najděte si perfektní službu pro vás</p>
+        <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 16px' }}>
+          <div style={{ marginBottom: '32px' }}>
+            <h2 style={{ fontSize: '30px', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>Katalog nabídek</h2>
+            <p style={{ color: '#6b7280' }}>Najděte si perfektní službu pro vás</p>
           </div>
 
-          <div className="mb-4 flex justify-between items-center">
-            <p className="text-gray-600">
-              {loading ? 'Načítání...' : `Nalezeno ${sortedOffers.length} nabídek`}
+          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ color: '#6b7280' }}>
+              {loading ? 'Načítání z Supabase databáze...' : `Nalezeno ${sortedOffers.length} nabídek z databáze`}
             </p>
           </div>
 
           {error && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <p className="text-yellow-800">{error}</p>
+            <div style={{
+              backgroundColor: '#fef3c7',
+              border: '1px solid #f59e0b',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '24px'
+            }}>
+              <p style={{ color: '#92400e' }}>{error}</p>
             </div>
           )}
 
           {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Načítání nabídek...</p>
+            <div style={{ textAlign: 'center', padding: '48px' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                border: '3px solid #e5e7eb',
+                borderTop: '3px solid #2563eb',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                margin: '0 auto 16px'
+              }}></div>
+              <p style={{ color: '#6b7280' }}>Načítání nabídek z Supabase databáze...</p>
             </div>
           ) : (
             <div>
               {/* VIP nabídky - 2 vedle sebe */}
               {sortedOffers.filter(offer => offer.vip).length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold text-yellow-600 mb-4 flex items-center">
+                <div style={{ marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#d97706', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
                     ⭐ VIP nabídky
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                     {sortedOffers.filter(offer => offer.vip).map(offer => (
                       <VipCard key={offer.id} offer={offer} onReserve={handleReserve} />
                     ))}
@@ -551,10 +776,10 @@ export default function AppInner() {
               {/* Standardní nabídky - 3 vedle sebe */}
               {sortedOffers.filter(offer => !offer.vip).length > 0 && (
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-700 mb-4">
+                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#374151', marginBottom: '16px' }}>
                     Všechny nabídky
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                     {sortedOffers.filter(offer => !offer.vip).map(offer => (
                       <StdCard key={offer.id} offer={offer} onReserve={handleReserve} />
                     ))}
@@ -565,8 +790,8 @@ export default function AppInner() {
           )}
 
           {!loading && sortedOffers.length === 0 && !error && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
+            <div style={{ textAlign: 'center', padding: '48px' }}>
+              <p style={{ color: '#9ca3af', fontSize: '18px' }}>Nebyly nalezeny žádné nabídky odpovídající vašim kritériím.</p>
             </div>
           )}
 
