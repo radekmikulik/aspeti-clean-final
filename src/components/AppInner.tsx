@@ -9,12 +9,12 @@
 // ZMĚNY ZAPISOVAT jako komentáře: // ADD(YYYY-MM-DD): ... nebo // UPDATE(YYYY-MM-DD): ...
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 // ----- Globální pomocné funkce (dostupné pro všechny komponenty) -----
   // using global daysSince
 
-const hoursSince = (dateStr: string) => {
+const hoursSince = (dateStr: string | number | Date) => {
   try { return Math.max(0, (Date.now() - new Date(dateStr).getTime())/(1000*60*60)); }
   catch { return 9999; }
 };
@@ -25,7 +25,7 @@ const isNewOffer = (o: any) => {
   const added = o && o.addedAt ? o.addedAt : 0;
   return hoursSince(added) <= winH;
 };
-const prettyAge = (dateStr: string) => {
+const prettyAge = (dateStr: string | number | Date) => {
   const ms = Date.now() - new Date(dateStr).getTime();
   const h = Math.floor(ms / (1000*60*60));
   if (isNaN(h)) return '';
@@ -35,12 +35,12 @@ const prettyAge = (dateStr: string) => {
 };
 
 // Bezpečný obrázkový komponent s fallbackem (řeší 403/CSP a hotlink blokace)
-function ImageWithFallback({ src, alt, className }) {
+function ImageWithFallback({ src, alt, className }: { src: string | string[], alt: string, className?: string }) {
   // Multi‑source loader: podporuje pole zdrojů [primární, sekundární, ...]
   const sources = Array.isArray(src) ? src : [src];
   const [idx, setIdx] = useState(0);
-  const [loaded, setLoaded] = useState(true); // Changed default to true for static export
-  useEffect(() => { setIdx(0); setLoaded(true); }, [src]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { setIdx(0); setLoaded(false); }, [src]);
   const styleBg = { backgroundImage: 'linear-gradient(135deg, #E7EFEA 0%, #CAD8D0 100%)' };
   const current = sources[idx];
   return (
@@ -57,7 +57,7 @@ function ImageWithFallback({ src, alt, className }) {
           if (idx < sources.length - 1) { setIdx(idx + 1); }
           else { setLoaded(false); }
         }}
-        style={{ opacity: 1 }} // Always show images with full opacity
+        style={{ opacity: loaded ? 1 : 0 }}
       />
       {!loaded && (
         <div className="absolute inset-0 flex items-center justify-center">
@@ -69,7 +69,7 @@ function ImageWithFallback({ src, alt, className }) {
 }
 
 // Lokální SVG fallbacky (aby se konkrétní fotky vždy zobrazily)
-const mkSVG = (label) => 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+const mkSVG = (label: string) => 'data:image/svg+xml;utf8,' + encodeURIComponent(`
   <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
     <defs>
       <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -87,7 +87,7 @@ const LOCAL_IMAGES = {
 };
 
 // Jednoduchý tooltip (funguje i bez nativního title; hover, focus a tap)
-function Tooltip({ content, children, side = 'top' }) {
+function Tooltip({ content, children, side = 'top' }: { content: React.ReactNode, children: React.ReactNode, side?: 'top' | 'bottom' | 'left' | 'right' }) {
   const [open, setOpen] = useState(false);
   const pos = side === 'top' ? 'bottom-full mb-1' : side === 'bottom' ? 'top-full mt-1' : side === 'left' ? 'right-full mr-1' : 'left-1/2 -translate-x-1/2 top-full mt-1';
   return (
@@ -107,7 +107,7 @@ function Tooltip({ content, children, side = 'top' }) {
 
 // Sticky hook pro filtr (přilepí filtr pod header při scrollu)
 function useSticky(offsetPx = 56) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [stuck, setStuck] = useState(false);
   useEffect(() => {
     const onScroll = () => {
@@ -154,12 +154,7 @@ interface Offer {
   top?: boolean;
 }
 
-function CategoryPanel({ active, label, img, onClick }: {
-  active: boolean;
-  label: string;
-  img: string;
-  onClick: () => void;
-}) {
+function CategoryPanel({ active, label, img, onClick }: { active: boolean, label: string, img: string, onClick: () => void }) {
   const baseCls = "group overflow-hidden rounded-md border border-[#D2DED8] bg-white shadow-md transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4B40] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F7F6]";
   const cls = active ? baseCls + " ring-2 ring-blue-300" : baseCls;
   return (
@@ -246,20 +241,7 @@ function StdCard({ o }: { o: Offer }) {
   );
 }
 
-function FilterBar({ count, city, setCity, address, setAddress, radius, setRadius, category, setCategory, query, setQuery, stuck }: {
-  count: number;
-  city: string;
-  setCity: (value: string) => void;
-  address: string;
-  setAddress: (value: string) => void;
-  radius: number;
-  setRadius: (value: number) => void;
-  category: string;
-  setCategory: (value: string) => void;
-  query: string;
-  setQuery: (value: string) => void;
-  stuck: boolean;
-}) {
+function FilterBar({ count, city, setCity, address, setAddress, radius, setRadius, category, setCategory, query, setQuery, stuck }) {
   const CATEGORIES = [
     { key: "all", label: "Všechny nabídky" },
     { key: "beauty", label: "Beauty & Wellbeing" },
@@ -302,9 +284,9 @@ function FilterBar({ count, city, setCity, address, setAddress, radius, setRadiu
 }
 
 // ADD(2025-10-28): Poskytovatelský účet – demo skeleton (oddělený od homepage)
-function AccountView({ onClose }: { onClose: () => void }) {
+function AccountView({ onClose }){
   const [section, setSection] = React.useState('overview');
-  const NavItem = ({ id, label }: { id: string; label: string }) => (
+  const NavItem = ({id, label}) => (
     <button
       onClick={()=>setSection(id)}
       className={`w-full text-left px-3 py-2 rounded-md border ${section===id? 'bg-[#E7EFEA] border-[#C8D6CF] text-blue-900' : 'bg-white border-transparent text-blue-900/80 hover:bg-[#F5F7F6]'}`}
@@ -456,12 +438,7 @@ function AccountView({ onClose }: { onClose: () => void }) {
   );
 }
 
-function AppInner({ onOfferClick, authMode, setAuthMode, onNavigate }: {
-  onOfferClick?: (offer: any) => void;
-  authMode?: any;
-  setAuthMode?: (mode: any) => void;
-  onNavigate?: (page: string) => void;
-}) {
+function AppInner({ onOfferClick, authMode, setAuthMode, onNavigate }){
   const { ref: filterRef, stuck: filterStuck } = useSticky(56);
   const { user, signOut } = useAuth();
 
