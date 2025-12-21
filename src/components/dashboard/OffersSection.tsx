@@ -23,6 +23,11 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
     location: '',
     promo: '',
     vip: false,
+    // Nová pole
+    service_location_type: 'AT_PROVIDER' as 'AT_PROVIDER' | 'AT_CUSTOMER',
+    images: [] as string[],
+    discount_percent: 0,
+    base_price: 0,
   })
 
   const activeOffers = offers.filter(o => o.is_active)
@@ -40,6 +45,11 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
         location: offer.location,
         promo: offer.promo || '',
         vip: offer.vip,
+        // Nová pole
+        service_location_type: offer.service_location_type || 'AT_PROVIDER',
+        images: offer.images || [],
+        discount_percent: offer.discount_percent || 0,
+        base_price: offer.base_price || (offer.old_price || offer.price),
       })
     } else {
       setEditingOffer(null)
@@ -52,6 +62,11 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
         location: '',
         promo: '',
         vip: false,
+        // Nová pole - defaulty
+        service_location_type: 'AT_PROVIDER',
+        images: [],
+        discount_percent: 0,
+        base_price: 0,
       })
     }
     setShowForm(true)
@@ -59,19 +74,30 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
 
   const handleSave = async () => {
     setSaving(true)
+    
+    // Vypočítání finální ceny na základě base_price a discount_percent
+    const basePrice = formData.base_price || formData.price
+    const discountPercent = formData.discount_percent || 0
+    const finalPrice = Math.round(basePrice * (1 - discountPercent / 100))
+    
     const offerData = {
       provider_id: providerId,
       title: formData.title,
       description: formData.description,
       category: formData.category,
-      price: formData.price,
-      old_price: formData.old_price || null,
-      new_price: formData.old_price ? formData.price : null,
-      discount: formData.old_price ? Math.round((1 - formData.price / formData.old_price) * 100) : 0,
+      price: finalPrice, // Finální cena po slevě
+      old_price: formData.discount_percent > 0 ? basePrice : null,
+      new_price: formData.discount_percent > 0 ? finalPrice : null,
+      discount: formData.discount_percent,
       location: formData.location,
       promo: formData.promo || null,
       vip: formData.vip,
       is_active: true,
+      // Nová pole
+      service_location_type: formData.service_location_type,
+      images: formData.images.length > 0 ? formData.images : [],
+      base_price: basePrice,
+      discount_percent: discountPercent,
     }
 
     if (editingOffer) {
@@ -122,22 +148,40 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
             <span className="capitalize">{offer.category}</span>
-            <span className="flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
-              {offer.location}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {offer.old_price && (
-              <span className="text-gray-400 line-through text-sm">{offer.old_price} Kc</span>
-            )}
-            <span className="font-bold text-emerald-600">{offer.new_price || offer.price} Kc</span>
-            {offer.discount > 0 && (
-              <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs font-medium rounded">
-                -{offer.discount}%
+            {/* Místo konání */}
+            {offer.service_location_type === 'AT_CUSTOMER' ? (
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                U zákazníka
               </span>
+            ) : offer.location ? (
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {offer.location}
+              </span>
+            ) : null}
+          </div>
+          
+          {/* Cena a sleva */}
+          <div className="flex items-center gap-2">
+            {offer.discount_percent && offer.discount_percent > 0 ? (
+              <>
+                <span className="text-gray-400 line-through text-sm">{offer.base_price || offer.old_price} Kč</span>
+                <span className="font-bold text-emerald-600">{offer.price} Kč</span>
+                <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs font-medium rounded">
+                  -{offer.discount_percent}%
+                </span>
+              </>
+            ) : (
+              <span className="font-bold text-emerald-600">{offer.price} Kč</span>
             )}
           </div>
+          
+          {/* Počet fotek */}
+          {offer.images && offer.images.length > 0 && (
+            <div className="text-xs text-gray-500 mt-1">
+              📷 {offer.images.length} fotek
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -298,26 +342,194 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
                 </div>
               </div>
 
+              {/* KROK 1: MÍSTO KONÁNÍ */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Místo konání služby</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                    formData.service_location_type === 'AT_PROVIDER' 
+                      ? 'border-emerald-500 bg-emerald-50' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="service_location_type"
+                      value="AT_PROVIDER"
+                      checked={formData.service_location_type === 'AT_PROVIDER'}
+                      onChange={(e) => setFormData({ ...formData, service_location_type: e.target.value as 'AT_PROVIDER' | 'AT_CUSTOMER' })}
+                      className="w-4 h-4 text-emerald-600"
+                    />
+                    <div>
+                      <span className="font-medium">U mě</span>
+                      <p className="text-xs text-gray-600">Služba u poskytovatele</p>
+                    </div>
+                  </label>
+                  <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                    formData.service_location_type === 'AT_CUSTOMER' 
+                      ? 'border-emerald-500 bg-emerald-50' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="service_location_type"
+                      value="AT_CUSTOMER"
+                      checked={formData.service_location_type === 'AT_CUSTOMER'}
+                      onChange={(e) => setFormData({ ...formData, service_location_type: e.target.value as 'AT_PROVIDER' | 'AT_CUSTOMER' })}
+                      className="w-4 h-4 text-emerald-600"
+                    />
+                    <div>
+                      <span className="font-medium">U zákazníka</span>
+                      <p className="text-xs text-gray-600">Služba u klienta</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Adresa - povinná pouze pro AT_PROVIDER */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Adresa {formData.service_location_type === 'AT_PROVIDER' ? '*' : '(volitelné)'}
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  placeholder={formData.service_location_type === 'AT_PROVIDER' ? "Adresa provozovny *" : "Adresa (volitelné)"}
+                  required={formData.service_location_type === 'AT_PROVIDER'}
+                />
+                {formData.service_location_type === 'AT_CUSTOMER' && (
+                  <p className="text-xs text-gray-500 mt-1">Pro služby u zákazníka není adresa povinná</p>
+                )}
+              </div>
+
+              {/* KROK 3: CENA + SLEVA */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Cena (Kc)</label>
+                  <label className="block text-sm font-medium mb-1">Základní cena (Kč) *</label>
                   <input
                     type="number"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                    value={formData.base_price || formData.price}
+                    onChange={(e) => {
+                      const basePrice = Number(e.target.value) || 0
+                      setFormData({ 
+                        ...formData, 
+                        base_price: basePrice,
+                        price: basePrice // automaticky nastaví final price na base price
+                      })
+                    }}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    placeholder="590"
+                    min="0"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Puvodni cena</label>
+                  <label className="block text-sm font-medium mb-1">Sleva (%)</label>
                   <input
                     type="number"
-                    value={formData.old_price || ''}
-                    onChange={(e) => setFormData({ ...formData, old_price: Number(e.target.value) || 0 })}
+                    value={formData.discount_percent || ''}
+                    onChange={(e) => {
+                      const discountPercent = Math.min(100, Math.max(0, Number(e.target.value) || 0))
+                      const basePrice = formData.base_price || formData.price
+                      const finalPrice = Math.round(basePrice * (1 - discountPercent / 100))
+                      setFormData({ 
+                        ...formData, 
+                        discount_percent: discountPercent,
+                        price: finalPrice
+                      })
+                    }}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                    placeholder="Pro slevu"
+                    placeholder="0"
+                    min="0"
+                    max="100"
                   />
                 </div>
+              </div>
+
+              {/* Zobrazení výsledné ceny */}
+              {formData.discount_percent > 0 && (
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Výsledná cena po slevě:</span>
+                    <span className="font-bold text-emerald-600">{formData.price} Kč</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
+                    <span>Sleva {formData.discount_percent}% z {formData.base_price || formData.price} Kč</span>
+                    <span>Ušetříte {((formData.base_price || formData.price) - formData.price)} Kč</span>
+                  </div>
+                </div>
+              )}
+
+              {/* KROK 2: FOTKY */}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Fotky nabídky * ({formData.images.length}
+                  {['reality', 'ubytovani'].includes(formData.category) ? '/20' : '/8'})
+                </label>
+                
+                {/* Upload sekce */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || [])
+                      const newImages = files.map(file => URL.createObjectURL(file))
+                      const maxImages = ['reality', 'ubytovani'].includes(formData.category) ? 20 : 8
+                      const updatedImages = [...formData.images, ...newImages].slice(0, maxImages)
+                      setFormData({ ...formData, images: updatedImages })
+                    }}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <label htmlFor="image-upload" className="cursor-pointer">
+                    <div className="text-gray-500 mb-2">
+                      <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </div>
+                    <p className="text-sm text-gray-600">Klikněte pro výběr fotek</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Min 1, max {['reality', 'ubytovani'].includes(formData.category) ? '20' : '8'} fotek
+                    </p>
+                  </label>
+                </div>
+
+                {/* Náhled fotek */}
+                {formData.images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-3">
+                    {formData.images.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={image}
+                          alt={`Fotka ${index + 1}`}
+                          className="w-full h-20 object-cover rounded-lg border"
+                        />
+                        <button
+                          onClick={() => {
+                            const updatedImages = formData.images.filter((_, i) => i !== index)
+                            setFormData({ ...formData, images: updatedImages })
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          ×
+                        </button>
+                        {index === 0 && (
+                          <div className="absolute bottom-1 left-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded">
+                            Hlavní
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <p className="text-xs text-gray-500 mt-2">
+                  {formData.images.length === 0 && 'Je nutné nahrát alespoň 1 fotku'}
+                  {formData.images.length > 0 && formData.images.length < 1 && 'Minimálně 1 fotka je povinná'}
+                </p>
               </div>
 
               <div>
@@ -351,7 +563,14 @@ export function OffersSection({ offers, providerId, onRefresh }: OffersSectionPr
               </button>
               <button
                 onClick={handleSave}
-                disabled={saving || !formData.title || !formData.price}
+                disabled={
+                  saving || 
+                  !formData.title || 
+                  !formData.base_price || 
+                  formData.base_price <= 0 ||
+                  (formData.service_location_type === 'AT_PROVIDER' && !formData.location.trim()) ||
+                  formData.images.length === 0
+                }
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
