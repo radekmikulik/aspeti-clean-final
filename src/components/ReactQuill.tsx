@@ -22,11 +22,13 @@ export const ReactQuill: React.FC<ReactQuillProps> = ({
         placeholder={placeholder}
         className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[200px] resize-y"
       />
-      <style jsx>{`
-        .react-quill-mock .ql-editor {
-          min-height: 200px;
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .react-quill-mock .ql-editor {
+            min-height: 200px;
+          }
+        `
+      }} />
     </div>
   )
 }
