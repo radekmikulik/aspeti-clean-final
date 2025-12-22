@@ -305,6 +305,17 @@ function AppContent() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
+      
+      // KROK 3 - INICIALIZACE MOCK STORAGE S DEMO DATY
+      if (typeof window !== 'undefined') {
+        (window as any).mockStorage = (window as any).mockStorage || {}
+        // Initialize mockStorage with demo data if not already set
+        if (!(window as any).mockStorage['demo-provider-id']) {
+          (window as any).mockStorage['demo-provider-id'] = demoProvider
+          console.log('✅ Mock storage initialized with demo provider data')
+        }
+      }
+      
       setProvider(demoProvider)
       console.log('Fallback provider data loaded:', demoProvider.business_name)
     }
@@ -324,25 +335,24 @@ function AppContent() {
       setProvider(newProviderData)
       console.log('Provider updated locally immediately:', newProviderData)
       
-      // Try to update in Supabase database in background (non-blocking)
-      setTimeout(async () => {
-        try {
-          const { data, error } = await supabase
-            .from('providers')
-            .update({ ...updates, updated_at: new Date().toISOString() })
-            .eq('id', provider.id)
-            .select()
-            .single()
-          
-          if (!error && data) {
-            console.log('Provider updated successfully in database:', data)
-          } else {
-            console.log('Supabase update failed (background):', error)
-          }
-        } catch (supabaseError) {
-          console.log('Supabase update failed (background):', supabaseError)
+      // Try to update in Supabase database synchronously
+      try {
+        const { data, error } = await supabase
+          .from('providers')
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', provider.id)
+          .select()
+          .single()
+        
+        if (!error && data) {
+          console.log('Provider updated successfully in database:', data)
+        } else {
+          console.log('Supabase update failed:', error)
+          // Fallback to local state only if database fails
         }
-      }, 100) // Small delay to avoid blocking UI
+      } catch (supabaseError) {
+        console.log('Supabase update failed:', supabaseError)
+      }
       
     } catch (error) {
       console.error('Error in updateProvider:', error)

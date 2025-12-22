@@ -137,8 +137,22 @@ export function ProfileEditVizitka({ provider, onUpdate, onClose }: ProfileEditV
 
   const handleImageUpload = async (file: File, type: 'logo' | 'cover' | 'gallery') => {
     setUploading(type)
+    
+    // KROK 1 - LOGGING VYBRANÉHO SOUBORU
+    console.log('🔍 SELECTED FILE:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    })
+    
     try {
       const url = await uploadProviderImage(file, type === 'gallery' ? 'gallery' : type)
+      
+      // KROK 1 - PREVIEW VYBRANÉHO SOUBORU
+      const objectUrl = URL.createObjectURL(file)
+      console.log('🔍 PREVIEW URL for selected file:', objectUrl)
+      
       if (url) {
         if (type === 'logo') {
           await onUpdate({ logo_url: url })

@@ -1,8 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { supabase } from '../lib/supabase'
-import type { User } from '@supabase/supabase-js'
 
-// Use Supabase User type
+// Mock User type
+interface User {
+  id: string
+  email: string
+  user_metadata?: any
+}
 
 interface AuthContextType {
   user: User | null
