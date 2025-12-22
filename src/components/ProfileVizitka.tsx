@@ -81,7 +81,9 @@ export function ProfileVizitka({ provider, onEdit, onOverview, onClose }: Profil
           {/* Logo - zvětšené a zviditelněné */}
           <div className="relative">
             <div className="w-28 h-28 rounded-xl border-3 border-white shadow-xl overflow-hidden bg-white">
-              {provider.logo_url ? (
+              {provider.profile_image_url ? (
+                <img src={provider.profile_image_url} alt="Profilová fotka" className="w-full h-full object-cover" />
+              ) : provider.logo_url ? (
                 <img src={provider.logo_url} alt="Logo" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-600 text-2xl font-bold">

@@ -159,6 +159,7 @@ function AppContent() {
         categories: ['beauty', 'gastro'],
         logo_url: undefined,
         cover_url: undefined,
+        profile_image_url: undefined,
         gallery_urls: [
           'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop',
           'https://images.unsplash.com/photo-1501117716987-c8e2a4a3af5a?w=400&h=400&fit=crop',
@@ -244,6 +245,7 @@ function AppContent() {
         categories: ['beauty', 'gastro'],
         logo_url: undefined,
         cover_url: undefined,
+        profile_image_url: undefined,
         gallery_urls: [
           'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop',
           'https://images.unsplash.com/photo-1501117716987-c8e2a4a3af5a?w=400&h=400&fit=crop',

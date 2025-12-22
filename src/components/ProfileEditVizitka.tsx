@@ -155,7 +155,8 @@ export function ProfileEditVizitka({ provider, onUpdate, onClose }: ProfileEditV
       
       if (url) {
         if (type === 'logo') {
-          await onUpdate({ logo_url: url })
+          // KROK 4 - Uložení do profile_image_url pro skutečný upload
+          await onUpdate({ profile_image_url: url })
         } else if (type === 'cover') {
           await onUpdate({ cover_url: url })
         } else {
@@ -288,7 +289,9 @@ export function ProfileEditVizitka({ provider, onUpdate, onClose }: ProfileEditV
               {/* Logo */}
               <div className="relative">
                 <div className="w-32 h-32 rounded-2xl bg-white shadow-lg overflow-hidden border-2 border-gray-200">
-                  {provider.logo_url ? (
+                  {provider.profile_image_url ? (
+                    <img src={provider.profile_image_url} alt="Profilová fotka" className="w-full h-full object-cover" />
+                  ) : provider.logo_url ? (
                     <img src={provider.logo_url} alt="Logo" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 text-2xl font-bold">
